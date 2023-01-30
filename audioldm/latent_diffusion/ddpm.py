@@ -16,8 +16,8 @@ from functools import partial
 from tqdm import tqdm
 
 from audioldm.utils import exists, default, count_params, instantiate_from_config
-from audioldm.model.latent_diffusion.ema import LitEma
-from audioldm.model.latent_diffusion.util import (
+from audioldm.latent_diffusion.ema import LitEma
+from audioldm.latent_diffusion.util import (
     make_beta_schedule,
     extract_into_tensor,
     noise_like,

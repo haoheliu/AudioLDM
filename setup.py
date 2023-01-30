@@ -30,7 +30,7 @@ DESCRIPTION = "This package is written for text-to-audio generation."
 URL = "https://github.com/haoheliu/audioldm-python"
 EMAIL = "haoheliu@gmail.com"
 AUTHOR = "Haohe Liu"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.7.0"
 VERSION = "0.0.1"
 
 # What packages are required for this module to be executed?
@@ -127,9 +127,9 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    # packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    # packages=find_packages(exclude=[]),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=["audioldm"],
+    # py_modules=["audioldm"],
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
     # },

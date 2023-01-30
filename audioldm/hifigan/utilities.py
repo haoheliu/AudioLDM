@@ -4,7 +4,7 @@ import json
 import torch
 import numpy as np
 
-import audioldm.model.hifigan as hifigan
+import audioldm.hifigan as hifigan
 
 HIFIGAN_16K_64 = {
     "resblock": "1",

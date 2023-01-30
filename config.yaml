@@ -1,4 +1,4 @@
-log_directory: "/mnt/fast/nobackup/scratch4weeks/hl01486/exps/audio_generation/stablediffusion/LDM"
+wave_file_save_path: "./output"
 
 id: 
   version: "v1"
@@ -8,7 +8,7 @@ id:
 model:
   device: "cuda"
   reload_from_ckpt: "/mnt/fast/nobackup/scratch4weeks/hl01486/exps/audio_generation/stablediffusion/LDM/audioverse/2023_01_14_full_F4_B_spatial_v2_v1/checkpoints/last.ckpt"
-  target: audioldm.model.pipline.LatentDiffusion
+  target: audioldm.pipline.LatentDiffusion
   params:
     base_learning_rate: 5.0e-6
     linear_start: 0.0015
@@ -26,7 +26,7 @@ model:
     monitor: val/loss_simple_ema
     scale_by_std: true
     unet_config:
-      target: audioldm.model.latent_diffusion.openaimodel.UNetModel
+      target: audioldm.latent_diffusion.openaimodel.UNetModel
       params:
         image_size: 64 # TODO here
         extra_film_condition_dim: 512
@@ -49,7 +49,7 @@ model:
 
     first_stage_config:
       base_learning_rate: 4.5e-05
-      target: audioldm.model.variational_autoencoder.autoencoder.AutoencoderKL
+      target: audioldm.variational_autoencoder.autoencoder.AutoencoderKL
       params:
         monitor: val/rec_loss
         image_key: fbank
@@ -73,7 +73,7 @@ model:
           dropout: 0.0
 
     cond_stage_config:
-      target: audioldm.model.clap.encoders.CLAPAudioEmbeddingClassifierFreev2
+      target: audioldm.clap.encoders.CLAPAudioEmbeddingClassifierFreev2
       params:
         # pretrained_path: /mnt/fast/nobackup/users/hl01486/projects/contrastive_pretraining/CLAP/assets/checkpoints/epoch_top_0_audioset_no_fusion.pt
         key: waveform

@@ -1,8 +1,4 @@
-import sys
 
-# sys.path.append(
-#     "/mnt/fast/nobackup/users/hl01486/projects/general_audio_generation/AudioLDM-python"
-# )
 
 import os
 
@@ -10,8 +6,7 @@ import argparse
 import yaml
 import torch
 
-from audioldm.model.pipline import LatentDiffusion
-from audioldm.utils import seed_everything
+from audioldm import LatentDiffusion, seed_everything
 
 import time
 
@@ -36,8 +31,12 @@ def make_batch_for_text_to_audio(text, batchsize=2):
     )  # fbank, log_magnitudes_stft, label_indices, fname, waveform, clip_label, text
     return batch
 
-def main(args, config):
-    log_path = config["log_directory"]
+def text_to_audio(config, text, wave_file_save_path=None):
+    config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
+    
+    if(wave_file_save_path is None):
+        log_path = config["wave_file_save_path"]
+    os.makedirs(log_path, exist_ok=True)
 
     config["id"]["version"] = "%s_%s" % (config["id"]["name"], config["id"]["version"])
 
@@ -64,12 +63,12 @@ def main(args, config):
 
     latent_diffusion.cond_stage_model.embed_mode = "text"
 
-    batch = make_batch_for_text_to_audio(args.text)
+    batch = make_batch_for_text_to_audio(text)
 
     with torch.no_grad():
         latent_diffusion.generate_sample(
             [batch],
-            name="text2sound/%s_%s" % (current_time, str(args.text)[:77]),
+            name="text_to_sound/%s_%s" % (current_time, str(text)[:77]),
             unconditional_guidance_scale=2.5,
             n_gen=1,
         )
@@ -91,9 +90,5 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
-    config = args.config
-
-    config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
-
-    main(args, config)
+    
+    text_to_audio(args.config, args.text)

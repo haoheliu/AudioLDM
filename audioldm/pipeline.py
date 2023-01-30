@@ -4,26 +4,21 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from audioldm.utils import default, instantiate_from_config, save_wave
-from audioldm.model.latent_diffusion.ddpm import DDPM
-from audioldm.model.variational_autoencoder.distributions import (
-    DiagonalGaussianDistribution,
-)
-from audioldm.model.latent_diffusion.util import noise_like
-from audioldm.model.latent_diffusion.ddim import DDIMSampler
+from audioldm.latent_diffusion.ddpm import DDPM
+from audioldm.variational_autoencoder.distributions import DiagonalGaussianDistribution
+from audioldm.latent_diffusion.util import noise_like
+from audioldm.latent_diffusion.ddim import DDIMSampler
 import os
 
 __conditioning_keys__ = {"concat": "c_concat", "crossattn": "c_crossattn", "adm": "y"}
-
 
 def disabled_train(self, mode=True):
     """Overwrite model.train with this function to make sure train/eval mode
     does not change anymore."""
     return self
 
-
 def uniform_on_device(r1, r2, shape, device):
     return (r1 - r2) * torch.rand(*shape, device=device) + r2
-
 
 class LatentDiffusion(DDPM):
     """main class"""
