@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch import nn
 from einops import rearrange
 
-from audioldmt_diffusion.util import checkpoint
+from audioldm.latent_diffusion.util import checkpoint
 
 
 def exists(val):
