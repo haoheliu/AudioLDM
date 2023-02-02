@@ -4,7 +4,7 @@
 
 <!-- # [![PyPI version](https://badge.fury.io/py/voicefixer.svg)](https://badge.fury.io/py/voicefixer) -->
 
-Generate speech, sound effects, music and more.
+Generate speech, sound effects, music and beyond.
 
 <hr>
 
