@@ -1,11 +1,11 @@
 # Audio Generation
 
-Under construction
-
 1. Prepare running environment
 ```
 conda create -n audioldm python=3.8
-pip3 install audioldm
+git clone git@github.com:haoheliu/AudioLDM.git
+cd AudioLDM
+pip3 install -e .
 ```
 
 2. Download pretrained checkpoint
@@ -39,6 +39,10 @@ If you found this tool useful, please consider citing
 }
 ```
 
+# Hardware requirement
+- GPU with 8GB of dedicated VRAM
+- A system with a 64-bit operating system (Windows 7, 8.1 or 10, Ubuntu 16.04 or later, or macOS 10.13 or later) 16GB or more of system RAM
+
 ## Reference
 Part of the code is borrowed from the following repos. We would like to thank the authors of these repos for their contribution. 
 
@@ -50,6 +54,7 @@ Part of the code is borrowed from the following repos. We would like to thank th
 
 > https://github.com/toshas/torch-fidelity
 
-# Hardware requirement
-- GPU with 8GB of dedicated VRAM
-- A system with a 64-bit operating system (Windows 7, 8.1 or 10, Ubuntu 16.04 or later, or macOS 10.13 or later) 16GB or more of system RAM
+
+We build the model with data from AudioSet, Freesound and BBC Sound Effect library. We share this demo based on the UK copyright exception of data for academic research. 
+
+<!-- This code repo is strictly for research demo purpose only. For commercial use please contact us. -->
