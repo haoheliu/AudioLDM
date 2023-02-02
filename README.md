@@ -19,13 +19,13 @@ wget https://zenodo.org/record/7600541/files/audioldm-s-full?download=1 -O ckpt/
 python3 scripts/text2sound.py
 ```
 
-# Hardware requirement
-
-
 # TODO
 
-- [ ] Add text-guided style transfer into the repo.
-- [ ] Add AudioCaps finetuned AudioLDM-S model.
+- [ ] Update the checkpoint with more training steps.
+- [ ] Add text-guided style transfer
+- [ ] Add audio super-resolution
+- [ ] Add audio inpainting
+- [ ] Add AudioCaps finetuned AudioLDM-S model
 
 ## Cite this work
 
@@ -43,6 +43,13 @@ If you found this tool useful, please consider citing
 Part of the code is borrowed from the following repos. We would like to thank the authors of these repos for their contribution. 
 
 > https://github.com/LAION-AI/CLAP
+
 > https://github.com/CompVis/stable-diffusion
+
 > https://github.com/v-iashin/SpecVQGAN 
+
 > https://github.com/toshas/torch-fidelity
+
+# Hardware requirement
+- GPU with 8GB of dedicated VRAM
+- A system with a 64-bit operating system (Windows 7, 8.1 or 10, Ubuntu 16.04 or later, or macOS 10.13 or later) 16GB or more of system RAM
