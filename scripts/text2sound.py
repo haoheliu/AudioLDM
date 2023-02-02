@@ -29,7 +29,7 @@ parser.add_argument(
     type=str,
     required=False,
     help="The path to the pretrained .ckpt model",
-    default="./ckpt/ldm_trimmed.ckpt",
+    default="./ckpt/audioldm-s-full.ckpt",
 )
 
 parser.add_argument(
