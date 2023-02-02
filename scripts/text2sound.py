@@ -76,7 +76,6 @@ parser.add_argument(
     help="Change this value (any integer number) will lead to a different generation result."
 )
 
-
 args = parser.parse_args()
 
 assert args.duration % 2.5 == 0
