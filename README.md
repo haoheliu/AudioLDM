@@ -38,7 +38,7 @@ For the evaluation of audio generative model, please refer to [audioldm_eval](ht
 
 - [ ] Update the checkpoint with more training steps.
 - [ ] Add AudioCaps finetuned AudioLDM-S model
-- [ ] Add pip installable package for commandline use
+- [ ] Build pip installable package for commandline use
 - [ ] Add text-guided style transfer
 - [ ] Add audio super-resolution
 - [ ] Add audio inpainting

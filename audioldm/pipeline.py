@@ -1,5 +1,3 @@
-
-
 import os
 
 import argparse
@@ -11,6 +9,7 @@ from audioldm.utils import default_audioldm_config
 
 import time
 
+
 def make_batch_for_text_to_audio(text, batchsize=1):
     text = [text] * batchsize
     if batchsize < 1:
@@ -18,7 +17,7 @@ def make_batch_for_text_to_audio(text, batchsize=1):
     fbank = torch.zeros((batchsize, 1024, 64))  # Not used, here to keep the code format
     stft = torch.zeros((batchsize, 1024, 512))  # Not used
     waveform = torch.zeros((batchsize, 160000))  # Not used
-    fname = [""] * batchsize # Not used
+    fname = [""] * batchsize  # Not used
     batch = (
         fbank,
         stft,
@@ -26,16 +25,17 @@ def make_batch_for_text_to_audio(text, batchsize=1):
         fname,
         waveform,
         text,
-    )  
+    )
     return batch
 
+
 def build_model(ckpt_path="./ckpt/ldm_trimmed.ckpt", config=None):
-    if(torch.cuda.is_available()):
+    if torch.cuda.is_available():
         device = torch.device("cuda:0")
     else:
         device = torch.device("cpu")
-        
-    if(config is not None):
+
+    if config is not None:
         assert type(config) is str
         config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
     else:
@@ -59,19 +59,30 @@ def build_model(ckpt_path="./ckpt/ldm_trimmed.ckpt", config=None):
     latent_diffusion.cond_stage_model.embed_mode = "text"
     return latent_diffusion
 
-def duration_to_latent_t_size(duration):
-    return int(duration * 25.6) 
 
-def text_to_audio(latent_diffusion, text, seed=42, duration=10, batchsize=1, guidance_scale=2.5, n_candidate_gen_per_text=3, config=None):
+def duration_to_latent_t_size(duration):
+    return int(duration * 25.6)
+
+
+def text_to_audio(
+    latent_diffusion,
+    text,
+    seed=42,
+    duration=10,
+    batchsize=1,
+    guidance_scale=2.5,
+    n_candidate_gen_per_text=3,
+    config=None,
+):
     seed_everything(int(seed))
     batch = make_batch_for_text_to_audio(text, batchsize=batchsize)
-    
+
     latent_diffusion.latent_t_size = duration_to_latent_t_size(duration)
     with torch.no_grad():
         waveform = latent_diffusion.generate_sample(
             [batch],
             unconditional_guidance_scale=guidance_scale,
             n_candidate_gen_per_text=n_candidate_gen_per_text,
-            duration=duration
+            duration=duration,
         )
     return waveform

@@ -10,10 +10,12 @@ from audioldm.latent_diffusion.util import noise_like
 from audioldm.latent_diffusion.ddim import DDIMSampler
 import os
 
+
 def disabled_train(self, mode=True):
     """Overwrite model.train with this function to make sure train/eval mode
     does not change anymore."""
     return self
+
 
 class LatentDiffusion(DDPM):
     """main class"""
@@ -628,7 +630,6 @@ class LatentDiffusion(DDPM):
 
         return samples, intermediate
 
-
     @torch.no_grad()
     def generate_sample(
         self,
@@ -697,7 +698,7 @@ class LatentDiffusion(DDPM):
 
                 waveform = self.mel_spectrogram_to_waveform(mel)
 
-                if(waveform.shape[0] > 1):
+                if waveform.shape[0] > 1:
                     similarity = self.cond_stage_model.cos_similarity(
                         torch.FloatTensor(waveform).squeeze(1), text
                     )
@@ -711,5 +712,5 @@ class LatentDiffusion(DDPM):
                     waveform = waveform[best_index]
                     # print("Similarity between generated audio and text", similarity)
                     # print("Choose the following indexes:", best_index)
-                        
+
         return waveform

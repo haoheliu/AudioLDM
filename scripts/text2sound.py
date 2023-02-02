@@ -38,7 +38,7 @@ parser.add_argument(
     type=int,
     required=False,
     default=1,
-    help="Generate how many samples at the same time"
+    help="Generate how many samples at the same time",
 )
 
 parser.add_argument(
@@ -47,7 +47,7 @@ parser.add_argument(
     type=float,
     required=False,
     default=2.5,
-    help="Guidance scale (Large => better quality and relavancy to text; Small => better diversity)"
+    help="Guidance scale (Large => better quality and relavancy to text; Small => better diversity)",
 )
 
 parser.add_argument(
@@ -56,7 +56,7 @@ parser.add_argument(
     type=float,
     required=False,
     default=10.0,
-    help="The duration of the samples"
+    help="The duration of the samples",
 )
 
 parser.add_argument(
@@ -65,7 +65,7 @@ parser.add_argument(
     type=int,
     required=False,
     default=3,
-    help="Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier computation"
+    help="Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier computation",
 )
 
 parser.add_argument(
@@ -73,7 +73,7 @@ parser.add_argument(
     type=int,
     required=False,
     default=42,
-    help="Change this value (any integer number) will lead to a different generation result."
+    help="Change this value (any integer number) will lead to a different generation result.",
 )
 
 args = parser.parse_args()
@@ -81,7 +81,7 @@ args = parser.parse_args()
 assert args.duration % 2.5 == 0
 
 save_path = args.save_path
-text=args.text
+text = args.text
 random_seed = args.seed
 duration = args.duration
 guidance_scale = args.guidance_scale
@@ -89,7 +89,14 @@ n_candidate_gen_per_text = args.n_candidate_gen_per_text
 
 os.makedirs(save_path, exist_ok=True)
 audioldm = build_model(ckpt_path=args.ckpt_path)
-waveform = text_to_audio(audioldm, text, random_seed, duration=duration, guidance_scale=guidance_scale, n_candidate_gen_per_text=3, batchsize=args.batchsize)
+waveform = text_to_audio(
+    audioldm,
+    text,
+    random_seed,
+    duration=duration,
+    guidance_scale=guidance_scale,
+    n_candidate_gen_per_text=3,
+    batchsize=args.batchsize,
+)
 
 save_wave(waveform, save_path, name=text)
-

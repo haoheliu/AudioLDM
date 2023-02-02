@@ -5,6 +5,7 @@ from audioldm.variational_autoencoder.distributions import DiagonalGaussianDistr
 
 from audioldm.hifigan.utilities import get_vocoder, vocoder_infer
 
+
 class AutoencoderKL(nn.Module):
     def __init__(
         self,

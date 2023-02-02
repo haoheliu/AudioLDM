@@ -23,6 +23,7 @@ def init_layer(layer):
         if layer.bias is not None:
             layer.bias.data.fill_(0.0)
 
+
 def init_bn(bn):
     """Initialize a Batchnorm layer."""
     bn.bias.data.fill_(0.0)

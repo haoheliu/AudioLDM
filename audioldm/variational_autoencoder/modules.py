@@ -8,6 +8,7 @@ from einops import rearrange
 from audioldm.utils import instantiate_from_config
 from audioldm.latent_diffusion.attention import LinearAttention
 
+
 def get_timestep_embedding(timesteps, embedding_dim):
     """
     This matches the implementation in Denoising Diffusion Probabilistic Models:
@@ -27,6 +28,7 @@ def get_timestep_embedding(timesteps, embedding_dim):
     if embedding_dim % 2 == 1:  # zero pad
         emb = torch.nn.functional.pad(emb, (0, 1, 0, 0))
     return emb
+
 
 def nonlinearity(x):
     # swish

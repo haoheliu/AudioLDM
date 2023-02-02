@@ -154,6 +154,7 @@ class CrossAttention(nn.Module):
 
     # use_flash_attention: bool = True
     use_flash_attention: bool = False
+
     def __init__(
         self,
         query_dim,

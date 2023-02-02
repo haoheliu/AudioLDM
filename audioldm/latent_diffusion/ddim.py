@@ -11,6 +11,7 @@ from audioldm.latent_diffusion.util import (
     extract_into_tensor,
 )
 
+
 class DDIMSampler(object):
     def __init__(self, model, schedule="linear", **kwargs):
         super().__init__()
