@@ -32,13 +32,15 @@ For more options on guidance scale, batchsize, seed, etc, please run
 python3 scripts/text2sound.py -h
 ```
 
+For the evaluation of audio generative model, please refer to [audioldm_eval](https://github.com/haoheliu/audioldm_eval).
+
 # TODO
 
 - [ ] Update the checkpoint with more training steps.
+- [ ] Add AudioCaps finetuned AudioLDM-S model
 - [ ] Add text-guided style transfer
 - [ ] Add audio super-resolution
 - [ ] Add audio inpainting
-- [ ] Add AudioCaps finetuned AudioLDM-S model
 
 ## Cite this work
 
