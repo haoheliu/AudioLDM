@@ -10,6 +10,7 @@ from audioldm.latent_diffusion.util import (
     noise_like,
     extract_into_tensor,
 )
+import gradio as gr
 
 class DDIMSampler(object):
     def __init__(self, model, schedule="linear", **kwargs):
@@ -200,6 +201,7 @@ class DDIMSampler(object):
         total_steps = timesteps if ddim_use_original_steps else timesteps.shape[0]
         # print(f"Running DDIM Sampling with {total_steps} timesteps")
 
+        # iterator = gr.Progress().tqdm(time_range, desc="DDIM Sampler", total=total_steps)
         iterator = tqdm(time_range, desc="DDIM Sampler", total=total_steps)
 
         for i, step in enumerate(iterator):
@@ -281,6 +283,7 @@ class DDIMSampler(object):
         total_steps = timesteps.shape[0]
         # print(f"Running DDIM Sampling with {total_steps} timesteps")
 
+        # iterator = gr.Progress().tqdm(time_range, desc="Decoding image", total=total_steps)
         iterator = tqdm(time_range, desc="Decoding image", total=total_steps)
         x_dec = x_latent
 

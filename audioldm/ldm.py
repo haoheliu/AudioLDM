@@ -10,15 +10,10 @@ from audioldm.latent_diffusion.util import noise_like
 from audioldm.latent_diffusion.ddim import DDIMSampler
 import os
 
-__conditioning_keys__ = {"concat": "c_concat", "crossattn": "c_crossattn", "adm": "y"}
-
 def disabled_train(self, mode=True):
     """Overwrite model.train with this function to make sure train/eval mode
     does not change anymore."""
     return self
-
-def uniform_on_device(r1, r2, shape, device):
-    return (r1 - r2) * torch.rand(*shape, device=device) + r2
 
 class LatentDiffusion(DDPM):
     """main class"""
@@ -69,7 +64,6 @@ class LatentDiffusion(DDPM):
         self.instantiate_cond_stage(cond_stage_config)
         self.cond_stage_forward = cond_stage_forward
         self.clip_denoised = False
-        self.bbox_tokenizer = None
 
     def make_cond_schedule(
         self,
@@ -236,15 +230,13 @@ class LatentDiffusion(DDPM):
         z = 1.0 / self.scale_factor * z
         return self.first_stage_model.decode(z)
 
-    def mel_spectrogram_to_waveform(self, mel, savepath=".", name="outwav", save=True):
+    def mel_spectrogram_to_waveform(self, mel):
         # Mel: [bs, 1, t-steps, fbins]
         if len(mel.size()) == 4:
             mel = mel.squeeze(1)
         mel = mel.permute(0, 2, 1)
         waveform = self.first_stage_model.vocoder(mel)
         waveform = waveform.cpu().detach().numpy()
-        if save:
-            save_wave(waveform, savepath, name)
         return waveform
 
     @torch.no_grad()
@@ -636,165 +628,6 @@ class LatentDiffusion(DDPM):
 
         return samples, intermediate
 
-    @torch.no_grad()
-    def generate_long_sample(
-        self,
-        batchs,
-        ddim_steps=200,
-        ddim_eta=1.0,
-        x_T=None,
-        n_gen=1,
-        generate_duration=60,
-        unconditional_guidance_scale=1.0,
-        unconditional_conditioning=None,
-        name="waveform",
-        use_plms=False,
-        **kwargs,
-    ):
-        assert n_gen == 1
-        assert x_T is None
-
-        try:
-            batchs = iter(batchs)
-        except TypeError:
-            raise ValueError("The first input argument should be an iterable object")
-
-        if use_plms:
-            assert ddim_steps is not None
-
-        def find_best_waveform_alignment(waveform1, waveform2, margin=1000):
-            # [2, 1, 163872]
-            diff = 32768
-            best_offset = None
-            for i in range(2, margin):
-                waveform_distance = np.mean(
-                    np.abs(waveform1[..., i:] - waveform2[..., :-i])
-                )
-                if waveform_distance < diff:
-                    best_offset = i
-                    diff = waveform_distance
-            for i in range(2, margin):
-                waveform_distance = np.mean(
-                    np.abs(waveform2[..., i:] - waveform1[..., :-i])
-                )
-                if waveform_distance < diff:
-                    best_offset = -i
-                    diff = waveform_distance
-            return best_offset
-
-        use_ddim = ddim_steps is not None
-        waveform_save_path = os.path.join(self.get_log_dir(), name)
-        os.makedirs(waveform_save_path, exist_ok=True)
-
-        print("Waveform save path: ", waveform_save_path)
-
-        with self.ema_scope("Plotting"):
-            for batch in batchs:
-                z, c = self.get_input(
-                    batch,
-                    self.first_stage_key,
-                    return_first_stage_outputs=False,
-                    force_c_encode=True,
-                    return_original_cond=False,
-                    bs=None,
-                )
-                text = super().get_input(batch, "text")
-
-                # Generate multiple samples
-                batch_size = z.shape[0]
-                c = torch.cat([c], dim=0)
-
-                if unconditional_guidance_scale != 1.0:
-                    unconditional_conditioning = (
-                        self.cond_stage_model.get_unconditional_condition(batch_size)
-                    )
-
-                fnames = list(super().get_input(batch, "fname"))
-
-                waveform = None
-                waveform_segment_length = None
-                mel_segment_length = None
-
-                while True:
-                    if waveform is None:
-                        # [2, 8, 256, 16]
-                        samples, _ = self.sample_log(
-                            cond=c,
-                            batch_size=batch_size,
-                            x_T=x_T,
-                            ddim=use_ddim,
-                            ddim_steps=ddim_steps,
-                            eta=ddim_eta,
-                            unconditional_guidance_scale=unconditional_guidance_scale,
-                            unconditional_conditioning=unconditional_conditioning,
-                            use_plms=use_plms,
-                        )
-
-                        # [2, 1, 1024, 64]
-                        mel = self.decode_first_stage(samples)
-
-                        # [2, 1, 163872] np.array
-                        waveform = self.mel_spectrogram_to_waveform(
-                            mel, savepath=waveform_save_path, name=fnames, save=False
-                        )
-                        mel_segment_length = mel.size(-2)
-                        waveform_segment_length = waveform.shape[-1]
-                    else:
-                        _, h, w = samples.shape[0], samples.shape[2], samples.shape[3]
-
-                        mask = torch.ones(batch_size, h, w).to(self.device)
-                        mask[:, 3 * (h // 16) :, :] = 0
-                        mask = mask[:, None, ...]
-
-                        rolled_sample = torch.roll(samples, shifts=(h // 4), dims=2)
-
-                        samples, _ = self.sample_log(
-                            cond=c,
-                            batch_size=batch_size,
-                            x_T=x_T,
-                            ddim=use_ddim,
-                            ddim_steps=ddim_steps,
-                            eta=ddim_eta,
-                            unconditional_guidance_scale=unconditional_guidance_scale,
-                            unconditional_conditioning=unconditional_conditioning,
-                            mask=mask,
-                            use_plms=use_plms,
-                            x0=rolled_sample,
-                        )
-
-                        # [2, 1, 1024, 64]
-                        mel_continuation = self.decode_first_stage(samples)
-
-                        # [2, 1, 163872] np.array
-                        waveform_continuation = self.mel_spectrogram_to_waveform(
-                            mel_continuation,
-                            savepath=waveform_save_path,
-                            name=fnames,
-                            save=False,
-                        )
-
-                        margin_waveform = waveform[
-                            ..., -(waveform_segment_length // 4) :
-                        ]
-                        offset = find_best_waveform_alignment(
-                            margin_waveform,
-                            waveform_continuation[..., : margin_waveform.shape[-1]],
-                        )
-                        print("Concatenation offset is %s" % offset)
-                        waveform = np.concatenate(
-                            [
-                                waveform[
-                                    ..., : -(waveform_segment_length // 4) + 2 * offset
-                                ],
-                                waveform_continuation,
-                            ],
-                            axis=-1,
-                        )
-                        save_wave(waveform, waveform_save_path, name=fnames)
-                        if waveform.shape[-1] / 16000 > generate_duration:
-                            break
-
-        return waveform_save_path
 
     @torch.no_grad()
     def generate_sample(
@@ -803,14 +636,15 @@ class LatentDiffusion(DDPM):
         ddim_steps=200,
         ddim_eta=1.0,
         x_T=None,
-        n_gen=1,
+        n_candidate_gen_per_text=1,
         unconditional_guidance_scale=1.0,
         unconditional_conditioning=None,
         name="waveform",
         use_plms=False,
+        save=False,
         **kwargs,
     ):
-        # Generate n_gen times and select the best
+        # Generate n_candidate_gen_per_text times and select the best
         # Batch: audio, text, fnames
         assert x_T is None
         try:
@@ -820,17 +654,12 @@ class LatentDiffusion(DDPM):
 
         if use_plms:
             assert ddim_steps is not None
-
         use_ddim = ddim_steps is not None
-        waveform_save_path = os.path.join(self.get_log_dir(), name)
-        os.makedirs(waveform_save_path, exist_ok=True)
-        print("Waveform save path: ", waveform_save_path)
+        # waveform_save_path = os.path.join(self.get_log_dir(), name)
+        # os.makedirs(waveform_save_path, exist_ok=True)
+        # print("Waveform save path: ", waveform_save_path)
 
-        # if("audiocaps" in waveform_save_path and len(os.listdir(waveform_save_path)) >= 964):
-        #     print("The evaluation has already been done at %s" % waveform_save_path)
-        #     return waveform_save_path
-
-        with self.ema_scope("Plotting"):
+        with self.ema_scope("Generate"):
             for batch in batchs:
                 z, c = self.get_input(
                     batch,
@@ -843,16 +672,14 @@ class LatentDiffusion(DDPM):
                 text = super().get_input(batch, "text")
 
                 # Generate multiple samples
-                batch_size = z.shape[0] * n_gen
-                c = torch.cat([c] * n_gen, dim=0)
-                text = text * n_gen
+                batch_size = z.shape[0] * n_candidate_gen_per_text
+                c = torch.cat([c] * n_candidate_gen_per_text, dim=0)
+                text = text * n_candidate_gen_per_text
 
                 if unconditional_guidance_scale != 1.0:
                     unconditional_conditioning = (
                         self.cond_stage_model.get_unconditional_condition(batch_size)
                     )
-
-                fnames = list(super().get_input(batch, "fname"))
 
                 samples, _ = self.sample_log(
                     cond=c,
@@ -868,400 +695,21 @@ class LatentDiffusion(DDPM):
 
                 mel = self.decode_first_stage(samples)
 
-                waveform = self.mel_spectrogram_to_waveform(
-                    mel, savepath=waveform_save_path, name=fnames, save=False
-                )
+                waveform = self.mel_spectrogram_to_waveform(mel)
 
-                similarity = self.cond_stage_model.cos_similarity(
-                    torch.FloatTensor(waveform).squeeze(1), text
-                )
-
-                best_index = []
-                for i in range(z.shape[0]):
-                    candidates = similarity[i :: z.shape[0]]
-                    max_index = torch.argmax(candidates).item()
-                    best_index.append(i + max_index * z.shape[0])
-
-                waveform = waveform[best_index]
-                # print("Similarity between generated audio and text", similarity)
-                # print("Choose the following indexes:", best_index)
-
-                save_wave(waveform, waveform_save_path, name=fnames)
-        return waveform_save_path
-
-    @torch.no_grad()
-    def audio_continuation(
-        self,
-        batchs,
-        ddim_steps=200,
-        ddim_eta=1.0,
-        x_T=None,
-        n_gen=1,
-        unconditional_guidance_scale=1.0,
-        unconditional_conditioning=None,
-        name="waveform",
-        use_plms=False,
-        **kwargs,
-    ):
-        assert x_T is None
-        try:
-            batchs = iter(batchs)
-        except TypeError:
-            raise ValueError("The first input argument should be an iterable object")
-
-        if use_plms:
-            assert ddim_steps is not None
-
-        use_ddim = ddim_steps is not None
-        waveform_save_path = os.path.join(self.get_log_dir(), name)
-        os.makedirs(waveform_save_path, exist_ok=True)
-        print("Waveform save path: ", waveform_save_path)
-        with self.ema_scope("Plotting Inpaint"):
-            for batch in batchs:
-                z, c = self.get_input(
-                    batch,
-                    self.first_stage_key,
-                    return_first_stage_outputs=False,
-                    force_c_encode=True,
-                    return_original_cond=False,
-                    bs=None,
-                )
-                text = super().get_input(batch, "text")
-
-                # Generate multiple samples
-                batch_size = z.shape[0] * n_gen
-                c = torch.cat([c] * n_gen, dim=0)
-                text = text * n_gen
-
-                if unconditional_guidance_scale != 1.0:
-                    unconditional_conditioning = (
-                        self.cond_stage_model.get_unconditional_condition(batch_size)
+                if(waveform.shape[0] > 1):
+                    similarity = self.cond_stage_model.cos_similarity(
+                        torch.FloatTensor(waveform).squeeze(1), text
                     )
 
-                fnames = list(super().get_input(batch, "fname"))
+                    best_index = []
+                    for i in range(z.shape[0]):
+                        candidates = similarity[i :: z.shape[0]]
+                        max_index = torch.argmax(candidates).item()
+                        best_index.append(i + max_index * z.shape[0])
 
-                _, h, w = z.shape[0], z.shape[2], z.shape[3]
-
-                mask = torch.ones(batch_size, h * 2, w).to(self.device)
-                mask[:, h:, :] = 0
-                mask = mask[:, None, ...]
-
-                z = torch.cat([z, torch.zeros_like(z)], dim=2)
-                samples, _ = self.sample_log(
-                    cond=c,
-                    batch_size=batch_size,
-                    x_T=x_T,
-                    ddim=use_ddim,
-                    ddim_steps=ddim_steps,
-                    eta=ddim_eta,
-                    unconditional_guidance_scale=unconditional_guidance_scale,
-                    unconditional_conditioning=unconditional_conditioning,
-                    mask=mask,
-                    use_plms=use_plms,
-                    x0=torch.cat([z] * n_gen, dim=0),
-                )
-
-                mel = self.decode_first_stage(samples)
-
-                waveform = self.mel_spectrogram_to_waveform(
-                    mel, savepath=waveform_save_path, name=fnames, save=False
-                )
-
-                similarity = self.cond_stage_model.cos_similarity(
-                    torch.FloatTensor(waveform).squeeze(1), text
-                )
-
-                best_index = []
-                for i in range(z.shape[0]):
-                    candidates = similarity[i :: z.shape[0]]
-                    max_index = torch.argmax(candidates).item()
-                    best_index.append(i + max_index * z.shape[0])
-
-                waveform = waveform[best_index]
-
-                # print("Similarity between generated audio and text", similarity)
-                # print("Choose the following indexes:", best_index)
-
-                save_wave(waveform, waveform_save_path, name=fnames)
-
-    @torch.no_grad()
-    def inpainting(
-        self,
-        batchs,
-        ddim_steps=200,
-        ddim_eta=1.0,
-        x_T=None,
-        n_gen=1,
-        unconditional_guidance_scale=1.0,
-        unconditional_conditioning=None,
-        name="waveform",
-        use_plms=False,
-        **kwargs,
-    ):
-        assert x_T is None
-        try:
-            batchs = iter(batchs)
-        except TypeError:
-            raise ValueError("The first input argument should be an iterable object")
-
-        if use_plms:
-            assert ddim_steps is not None
-
-        use_ddim = ddim_steps is not None
-        waveform_save_path = os.path.join(self.get_log_dir(), name)
-        os.makedirs(waveform_save_path, exist_ok=True)
-        print("Waveform save path: ", waveform_save_path)
-        with self.ema_scope("Plotting Inpaint"):
-            for batch in batchs:
-                z, c = self.get_input(
-                    batch,
-                    self.first_stage_key,
-                    return_first_stage_outputs=False,
-                    force_c_encode=True,
-                    return_original_cond=False,
-                    bs=None,
-                )
-                text = super().get_input(batch, "text")
-
-                # Generate multiple samples
-                batch_size = z.shape[0] * n_gen
-                c = torch.cat([c] * n_gen, dim=0)
-                text = text * n_gen
-
-                if unconditional_guidance_scale != 1.0:
-                    unconditional_conditioning = (
-                        self.cond_stage_model.get_unconditional_condition(batch_size)
-                    )
-
-                fnames = list(super().get_input(batch, "fname"))
-
-                _, h, w = z.shape[0], z.shape[2], z.shape[3]
-
-                mask = torch.ones(batch_size, h, w).to(self.device)
-                mask[:, h // 4 : 3 * (h // 4), :] = 0
-                mask = mask[:, None, ...]
-
-                samples, _ = self.sample_log(
-                    cond=c,
-                    batch_size=batch_size,
-                    x_T=x_T,
-                    ddim=use_ddim,
-                    ddim_steps=ddim_steps,
-                    eta=ddim_eta,
-                    unconditional_guidance_scale=unconditional_guidance_scale,
-                    unconditional_conditioning=unconditional_conditioning,
-                    mask=mask,
-                    use_plms=use_plms,
-                    x0=torch.cat([z] * n_gen, dim=0),
-                )
-
-                mel = self.decode_first_stage(samples)
-
-                waveform = self.mel_spectrogram_to_waveform(
-                    mel, savepath=waveform_save_path, name=fnames, save=False
-                )
-
-                similarity = self.cond_stage_model.cos_similarity(
-                    torch.FloatTensor(waveform).squeeze(1), text
-                )
-
-                best_index = []
-                for i in range(z.shape[0]):
-                    candidates = similarity[i :: z.shape[0]]
-                    max_index = torch.argmax(candidates).item()
-                    best_index.append(i + max_index * z.shape[0])
-
-                waveform = waveform[best_index]
-
-                # print("Similarity between generated audio and text", similarity)
-                # print("Choose the following indexes:", best_index)
-
-                save_wave(waveform, waveform_save_path, name=fnames)
-
-    @torch.no_grad()
-    def inpainting_half(
-        self,
-        batchs,
-        ddim_steps=200,
-        ddim_eta=1.0,
-        x_T=None,
-        n_gen=1,
-        unconditional_guidance_scale=1.0,
-        unconditional_conditioning=None,
-        name="waveform",
-        use_plms=False,
-        **kwargs,
-    ):
-        assert x_T is None
-        try:
-            batchs = iter(batchs)
-        except TypeError:
-            raise ValueError("The first input argument should be an iterable object")
-
-        if use_plms:
-            assert ddim_steps is not None
-
-        use_ddim = ddim_steps is not None
-        waveform_save_path = os.path.join(self.get_log_dir(), name)
-        os.makedirs(waveform_save_path, exist_ok=True)
-        print("Waveform save path: ", waveform_save_path)
-        with self.ema_scope("Plotting Inpaint"):
-            for batch in batchs:
-                z, c = self.get_input(
-                    batch,
-                    self.first_stage_key,
-                    return_first_stage_outputs=False,
-                    force_c_encode=True,
-                    return_original_cond=False,
-                    bs=None,
-                )
-                text = super().get_input(batch, "text")
-
-                # Generate multiple samples
-                batch_size = z.shape[0] * n_gen
-                c = torch.cat([c] * n_gen, dim=0)
-                text = text * n_gen
-
-                if unconditional_guidance_scale != 1.0:
-                    unconditional_conditioning = (
-                        self.cond_stage_model.get_unconditional_condition(batch_size)
-                    )
-
-                fnames = list(super().get_input(batch, "fname"))
-
-                _, h, w = z.shape[0], z.shape[2], z.shape[3]
-
-                mask = torch.ones(batch_size, h, w).to(self.device)
-                mask[:, int(h * 0.325) :, :] = 0
-                mask = mask[:, None, ...]
-
-                samples, _ = self.sample_log(
-                    cond=c,
-                    batch_size=batch_size,
-                    x_T=x_T,
-                    ddim=use_ddim,
-                    ddim_steps=ddim_steps,
-                    eta=ddim_eta,
-                    unconditional_guidance_scale=unconditional_guidance_scale,
-                    unconditional_conditioning=unconditional_conditioning,
-                    mask=mask,
-                    use_plms=use_plms,
-                    x0=torch.cat([z] * n_gen, dim=0),
-                )
-
-                mel = self.decode_first_stage(samples)
-
-                waveform = self.mel_spectrogram_to_waveform(
-                    mel, savepath=waveform_save_path, name=fnames, save=False
-                )
-
-                similarity = self.cond_stage_model.cos_similarity(
-                    torch.FloatTensor(waveform).squeeze(1), text
-                )
-
-                best_index = []
-                for i in range(z.shape[0]):
-                    candidates = similarity[i :: z.shape[0]]
-                    max_index = torch.argmax(candidates).item()
-                    best_index.append(i + max_index * z.shape[0])
-
-                waveform = waveform[best_index]
-
-                # print("Similarity between generated audio and text", similarity)
-                # print("Choose the following indexes:", best_index)
-
-                save_wave(waveform, waveform_save_path, name=fnames)
-
-    @torch.no_grad()
-    def super_resolution(
-        self,
-        batchs,
-        ddim_steps=200,
-        ddim_eta=1.0,
-        x_T=None,
-        n_gen=1,
-        unconditional_guidance_scale=1.0,
-        unconditional_conditioning=None,
-        name="waveform",
-        use_plms=False,
-        **kwargs,
-    ):
-        assert x_T is None
-        try:
-            batchs = iter(batchs)
-        except TypeError:
-            raise ValueError("The first input argument should be an iterable object")
-
-        if use_plms:
-            assert ddim_steps is not None
-
-        use_ddim = ddim_steps is not None
-        waveform_save_path = os.path.join(self.get_log_dir(), name)
-        os.makedirs(waveform_save_path, exist_ok=True)
-        print("Waveform save path: ", waveform_save_path)
-        with self.ema_scope("Plotting Inpaint"):
-            for batch in batchs:
-                z, c = self.get_input(
-                    batch,
-                    self.first_stage_key,
-                    return_first_stage_outputs=False,
-                    force_c_encode=True,
-                    return_original_cond=False,
-                    bs=None,
-                )
-                text = super().get_input(batch, "text")
-
-                # Generate multiple samples
-                batch_size = z.shape[0] * n_gen
-                c = torch.cat([c] * n_gen, dim=0)
-                text = text * n_gen
-
-                if unconditional_guidance_scale != 1.0:
-                    unconditional_conditioning = (
-                        self.cond_stage_model.get_unconditional_condition(batch_size)
-                    )
-
-                fnames = list(super().get_input(batch, "fname"))
-
-                _, h, w = z.shape[0], z.shape[2], z.shape[3]
-
-                mask = torch.ones(batch_size, h, w).to(self.device)
-                mask[:, :, 3 * (w // 4) :] = 0
-                mask = mask[:, None, ...]
-
-                samples, _ = self.sample_log(
-                    cond=c,
-                    batch_size=batch_size,
-                    x_T=x_T,
-                    ddim=use_ddim,
-                    ddim_steps=ddim_steps,
-                    eta=ddim_eta,
-                    unconditional_guidance_scale=unconditional_guidance_scale,
-                    unconditional_conditioning=unconditional_conditioning,
-                    mask=mask,
-                    use_plms=use_plms,
-                    x0=torch.cat([z] * n_gen, dim=0),
-                )
-
-                mel = self.decode_first_stage(samples)
-
-                waveform = self.mel_spectrogram_to_waveform(
-                    mel, savepath=waveform_save_path, name=fnames, save=False
-                )
-
-                similarity = self.cond_stage_model.cos_similarity(
-                    torch.FloatTensor(waveform).squeeze(1), text
-                )
-
-                best_index = []
-                for i in range(z.shape[0]):
-                    candidates = similarity[i :: z.shape[0]]
-                    max_index = torch.argmax(candidates).item()
-                    best_index.append(i + max_index * z.shape[0])
-
-                waveform = waveform[best_index]
-
-                # print("Similarity between generated audio and text", similarity)
-                # print("Choose the following indexes:", best_index)
-
-                save_wave(waveform, waveform_save_path, name=fnames)
+                    waveform = waveform[best_index]
+                    # print("Similarity between generated audio and text", similarity)
+                    # print("Choose the following indexes:", best_index)
+                        
+        return waveform

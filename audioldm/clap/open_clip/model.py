@@ -745,6 +745,8 @@ class CLAP(nn.Module):
         device = next(self.parameters()).device
         for k in data:
             data[k] = data[k].to(device)
+            if(len(data[k].size()) < 2):
+                data[k] = data[k].unsqueeze(0)
         text_embeds = self.encode_text(data, device=device)
         text_embeds = F.normalize(text_embeds, dim=-1)
 
