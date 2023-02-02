@@ -10,7 +10,6 @@ from audioldm.latent_diffusion.util import (
     noise_like,
     extract_into_tensor,
 )
-import gradio as gr
 
 class DDIMSampler(object):
     def __init__(self, model, schedule="linear", **kwargs):

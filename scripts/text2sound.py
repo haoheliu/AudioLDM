@@ -11,6 +11,7 @@ parser.add_argument(
     type=str,
     required=False,
     default="A hammer is hitting a wooden surface",
+    help="Text prompt to the model for audio generation",
 )
 
 parser.add_argument(
@@ -18,7 +19,7 @@ parser.add_argument(
     "--save_path",
     type=str,
     required=False,
-    help="Audio sampling rate during evaluation",
+    help="The path to save model output",
     default="./output",
 )
 
@@ -27,7 +28,7 @@ parser.add_argument(
     "--ckpt_path",
     type=str,
     required=False,
-    help="Audio sampling rate during evaluation",
+    help="The path to the pretrained .ckpt model",
     default="./ckpt/ldm_trimmed.ckpt",
 )
 
@@ -54,7 +55,8 @@ parser.add_argument(
     "--duration",
     type=float,
     required=False,
-    default=10.0
+    default=10.0,
+    help="The duration of the samples"
 )
 
 parser.add_argument(

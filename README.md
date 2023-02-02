@@ -16,7 +16,12 @@ wget https://zenodo.org/record/7600541/files/audioldm-s-full?download=1 -O ckpt/
 3. text-to-audio generation
 ```python
 # Test run
-python3 scripts/text2sound.py
+python3 scripts/text2sound.py -t "A hammer is hitting a wooden surface"
+```
+
+For more options on guidance scale, batchsize, seed, etc, please run
+```shell
+python3 scripts/text2sound.py -h
 ```
 
 # TODO
