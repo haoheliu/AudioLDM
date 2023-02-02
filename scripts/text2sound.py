@@ -78,7 +78,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-assert args.duration % 2.5 == 0
+assert args.duration % 2.5 == 0, "Duration must be a multiple of 2.5"
 
 save_path = args.save_path
 text = args.text
@@ -95,7 +95,7 @@ waveform = text_to_audio(
     random_seed,
     duration=duration,
     guidance_scale=guidance_scale,
-    n_candidate_gen_per_text=3,
+    n_candidate_gen_per_text=n_candidate_gen_per_text,
     batchsize=args.batchsize,
 )
 
