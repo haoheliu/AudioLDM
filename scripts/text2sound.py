@@ -89,7 +89,7 @@ guidance_scale = args.guidance_scale
 n_candidate_gen_per_text = args.n_candidate_gen_per_text
 
 os.makedirs(save_path, exist_ok=True)
-audioldm = build_model()
+audioldm = build_model(ckpt_path=args.ckpt_path)
 waveform = text_to_audio(audioldm, text, random_seed, duration=duration, guidance_scale=guidance_scale, n_candidate_gen_per_text=3, batchsize=args.batchsize)
 
 save_wave(waveform, save_path, name=text)
