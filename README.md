@@ -11,6 +11,7 @@ Generate speech, sound effects, music and beyond.
 1. Prepare running environment
 ```
 conda create -n audioldm python=3.8
+conda activate audioldm
 git clone git@github.com:haoheliu/AudioLDM.git
 cd AudioLDM
 pip3 install -e .
