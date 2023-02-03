@@ -17,12 +17,12 @@ cd AudioLDM
 pip3 install -e .
 ```
 
-1. Download pretrained checkpoint
+2. Download pretrained checkpoint
 ```shell
 wget https://zenodo.org/record/7600541/files/audioldm-s-full?download=1 -O ckpt/audioldm-s-full.ckpt
 ```
 
-1. text-to-audio generation
+3. text-to-audio generation
 ```python
 # Test run
 python3 scripts/text2sound.py -t "A hammer is hitting a wooden surface"
