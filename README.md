@@ -8,15 +8,33 @@ Generate speech, sound effects, music and beyond.
 
 <hr>
 
+
+## Web APP
 1. Prepare running environment
+```shell
+# Optional
+conda create -n audioldm python=3.8; conda activate audioldm
+
+pip3 install audioldm==0.0.6
+git clone https://github.com/haoheliu/AudioLDM
+cd AudioLDM
 ```
+2. Start the web application (powered by Gradio)
+```shell
+python3 app.py
+```
+3. A link will be printed out. Click the link to open the browser and play.
+
+## Commandline Usage
+1. Prepare running environment
+```shell
 # Optional
 conda create -n audioldm python=3.8; conda activate audioldm
 # Install AudioLDM
 pip3 install audioldm==0.0.6
 ```
 
-2. text-to-audio generation
+1. text-to-audio generation
 ```python
 # Test run
 audioldm -t "A hammer is hitting a wooden surface"
@@ -39,6 +57,7 @@ Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using 
 - [ ] Update the checkpoint with more training steps.
 - [ ] Add AudioCaps finetuned AudioLDM-S model
 - [x] Build pip installable package for commandline use
+- [x] Build Gradio web application
 - [ ] Add text-guided style transfer
 - [ ] Add audio super-resolution
 - [ ] Add audio inpainting
