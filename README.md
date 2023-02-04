@@ -13,7 +13,7 @@ Generate speech, sound effects, music and beyond.
 # Optional
 conda create -n audioldm python=3.8; conda activate audioldm
 # Install AudioLDM
-pip3 install audioldm==0.0.5
+pip3 install audioldm==0.0.6
 ```
 
 2. text-to-audio generation

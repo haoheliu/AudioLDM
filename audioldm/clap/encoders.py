@@ -163,7 +163,7 @@ class CLAPAudioEmbeddingClassifierFreev2(nn.Module):
             text,
             padding="max_length",
             truncation=True,
-            max_length=77,
+            max_length=512,
             return_tensors="pt",
         )
         return {k: v.squeeze(0) for k, v in result.items()}
