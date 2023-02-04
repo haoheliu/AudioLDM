@@ -12,12 +12,9 @@ Generate speech, sound effects, music and beyond.
 ## Web APP
 1. Prepare running environment
 ```shell
-# Optional
 conda create -n audioldm python=3.8; conda activate audioldm
-
 pip3 install audioldm==0.0.6
-git clone https://github.com/haoheliu/AudioLDM
-cd AudioLDM
+git clone https://github.com/haoheliu/AudioLDM; cd AudioLDM
 ```
 2. Start the web application (powered by Gradio)
 ```shell
@@ -34,7 +31,7 @@ conda create -n audioldm python=3.8; conda activate audioldm
 pip3 install audioldm==0.0.6
 ```
 
-1. text-to-audio generation
+2. text-to-audio generation
 ```python
 # Test run
 audioldm -t "A hammer is hitting a wooden surface"
