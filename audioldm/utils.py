@@ -83,7 +83,6 @@ def default_audioldm_config():
         },
         "model": {
             "device": "cuda",
-            "reload_from_ckpt": "/mnt/fast/nobackup/scratch4weeks/hl01486/exps/audio_generation/stablediffusion/LDM/audioverse/2023_01_14_full_F4_B_spatial_v2_v1/checkpoints/last.ckpt",
             "target": "audioldm.pipline.LatentDiffusion",
             "params": {
                 "base_learning_rate": 5e-06,

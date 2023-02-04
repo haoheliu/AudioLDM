@@ -27,11 +27,11 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = "audioldm"
 DESCRIPTION = "This package is written for text-to-audio generation."
-URL = "https://github.com/haoheliu/audioldm-python"
+URL = "https://github.com/haoheliu/audioldm"
 EMAIL = "haoheliu@gmail.com"
 AUTHOR = "Haohe Liu"
 REQUIRES_PYTHON = ">=3.7.0"
-VERSION = "0.0.1"
+VERSION = "0.0.5"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -137,6 +137,7 @@ setup(
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     packages=find_packages(),
+    # package_data={'bpe': ['audioldm/clap/open_clip/bpe_simple_vocab_16e6.txt.gz']},
     include_package_data=True,
     license="MIT",
     classifiers=[
@@ -153,4 +154,5 @@ setup(
     cmdclass={
         "upload": UploadCommand,
     },
+    scripts=['bin/audioldm.cmd', "bin/audioldm"]
 )

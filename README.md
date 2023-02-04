@@ -10,27 +10,21 @@ Generate speech, sound effects, music and beyond.
 
 1. Prepare running environment
 ```
-conda create -n audioldm python=3.8
-conda activate audioldm
-git clone git@github.com:haoheliu/AudioLDM.git
-cd AudioLDM
-pip3 install -e .
+# Optional
+conda create -n audioldm python=3.8; conda activate audioldm
+# Install AudioLDM
+pip3 install audioldm==0.0.5
 ```
 
-2. Download pretrained checkpoint
-```shell
-wget https://zenodo.org/record/7600541/files/audioldm-s-full?download=1 -O ckpt/audioldm-s-full.ckpt
-```
-
-3. text-to-audio generation
+2. text-to-audio generation
 ```python
 # Test run
-python3 scripts/text2sound.py -t "A hammer is hitting a wooden surface"
+audioldm -t "A hammer is hitting a wooden surface"
 ```
 
 For more options on guidance scale, batchsize, seed, etc, please run
 ```shell
-python3 scripts/text2sound.py -h
+audioldm -h
 ```
 
 For the evaluation of audio generative model, please refer to [audioldm_eval](https://github.com/haoheliu/audioldm_eval).
@@ -44,7 +38,7 @@ Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using 
 
 - [ ] Update the checkpoint with more training steps.
 - [ ] Add AudioCaps finetuned AudioLDM-S model
-- [ ] Build pip installable package for commandline use
+- [x] Build pip installable package for commandline use
 - [ ] Add text-guided style transfer
 - [ ] Add audio super-resolution
 - [ ] Add audio inpainting
