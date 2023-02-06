@@ -9,7 +9,7 @@ Generate speech, sound effects, music and beyond.
 <hr>
 
 ## Important tricks to make your generated audio sound better
-1. Try to use more adjectives to describe your sound. For example: "A man is speaking clearly and slowly" is better than "A man is speaking". This can make sure AudioLDM understand what you want.
+1. Try to use more adjectives to describe your sound. For example: "A man is speaking clearly and slowly in a professional studio" is better than "A man is speaking". This can make sure AudioLDM understand what you want.
 2. Try to use different random seeds, which can affect the generation quality significantly sometimes.
 3. It's best to use general terms like 'man' or 'woman' instead of specific names for individuals or abstract objects that humans may not be familiar with, such as 'mummy'.
 
