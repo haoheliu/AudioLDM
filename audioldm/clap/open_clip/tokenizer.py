@@ -6,7 +6,7 @@ import gzip
 import html
 import os
 from functools import lru_cache
-from typing import Union, List
+from typing import List, Union
 
 import ftfy
 import regex as re

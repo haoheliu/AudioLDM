@@ -1,7 +1,8 @@
 #!/usr/bin/python3
-import os
-from audioldm import text_to_audio, style_transfer, build_model, save_wave, get_time
 import argparse
+import os
+
+from audioldm import build_model, get_time, save_wave, style_transfer, text_to_audio
 
 parser = argparse.ArgumentParser()
 
@@ -11,7 +12,7 @@ parser.add_argument(
     required=False,
     default="generation",
     help="generation: text-to-audio generation; transfer: style transfer",
-    choices=["generation", "transfer"]
+    choices=["generation", "transfer"],
 )
 
 parser.add_argument(
@@ -56,9 +57,9 @@ parser.add_argument(
     required=False,
     help="The path to the pretrained .ckpt model",
     default=os.path.join(
-                os.path.expanduser("~"),
-                ".cache/audioldm/audioldm-s-full.ckpt",
-            ),
+        os.path.expanduser("~"),
+        ".cache/audioldm/audioldm-s-full.ckpt",
+    ),
 )
 
 parser.add_argument(
@@ -117,7 +118,7 @@ parser.add_argument(
 args = parser.parse_args()
 assert args.duration % 2.5 == 0, "Duration must be a multiple of 2.5"
 save_path = os.path.join(args.save_path, args.mode)
-if(args.file_path is not None):
+if args.file_path is not None:
     save_path = os.path.join(save_path, os.path.basename(args.file_path.split(".")[0]))
 
 text = args.text
@@ -129,7 +130,7 @@ n_candidate_gen_per_text = args.n_candidate_gen_per_text
 os.makedirs(save_path, exist_ok=True)
 audioldm = build_model(ckpt_path=args.ckpt_path)
 
-if(args.mode == "generation"):
+if args.mode == "generation":
     waveform = text_to_audio(
         audioldm,
         text,
@@ -140,9 +141,12 @@ if(args.mode == "generation"):
         n_candidate_gen_per_text=n_candidate_gen_per_text,
         batchsize=args.batchsize,
     )
-elif(args.mode == "transfer"):
+elif args.mode == "transfer":
     assert args.file_path is not None
-    assert os.path.exists(args.file_path), "The original audio file \'%s\' for style transfer does not exist." % args.file_path
+    assert os.path.exists(args.file_path), (
+        "The original audio file '%s' for style transfer does not exist."
+        % args.file_path
+    )
     waveform = style_transfer(
         audioldm,
         text,
@@ -154,6 +158,6 @@ elif(args.mode == "transfer"):
         ddim_steps=args.ddim_steps,
         batchsize=args.batchsize,
     )
-    waveform = waveform[:,None,:]
+    waveform = waveform[:, None, :]
 
 save_wave(waveform, save_path, name="%s_%s" % (get_time(), text))

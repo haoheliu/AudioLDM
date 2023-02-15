@@ -10,7 +10,7 @@ import torch
 
 from .model import CLAP, convert_weights_to_fp16
 from .openai import load_openai_model
-from .pretrained import get_pretrained_url, download_pretrained
+from .pretrained import download_pretrained, get_pretrained_url
 from .transform import image_transform
 
 _MODEL_CONFIG_PATHS = [Path(__file__).parent / f"model_configs/"]

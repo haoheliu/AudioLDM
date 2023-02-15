@@ -1,14 +1,14 @@
 """SAMPLING ONLY."""
 
-import torch
 import numpy as np
+import torch
 from tqdm import tqdm
 
 from audioldm.latent_diffusion.util import (
+    extract_into_tensor,
     make_ddim_sampling_parameters,
     make_ddim_timesteps,
     noise_like,
-    extract_into_tensor,
 )
 
 
@@ -271,7 +271,6 @@ class DDIMSampler(object):
         unconditional_conditioning=None,
         use_original_steps=False,
     ):
-
         timesteps = (
             np.arange(self.ddpm_num_timesteps)
             if use_original_steps

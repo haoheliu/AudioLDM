@@ -1,18 +1,17 @@
-import os
-
 import argparse
-import yaml
+import os
+import time
+
 import torch
+import yaml
+from einops import repeat
 from torch import autocast
 from tqdm import tqdm, trange
 
 from audioldm import LatentDiffusion, seed_everything
-from audioldm.utils import default_audioldm_config
-from audioldm.audio import wav_to_fbank, TacotronSTFT
+from audioldm.audio import TacotronSTFT, wav_to_fbank
 from audioldm.latent_diffusion.ddim import DDIMSampler
-from einops import repeat
-
-import time
+from audioldm.utils import default_audioldm_config
 
 
 def make_batch_for_text_to_audio(text, batchsize=1):

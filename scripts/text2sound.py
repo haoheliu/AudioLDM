@@ -1,7 +1,7 @@
-import os
-from audioldm import text_to_audio, build_model, save_wave
-
 import argparse
+import os
+
+from audioldm import build_model, save_wave, text_to_audio
 
 parser = argparse.ArgumentParser()
 

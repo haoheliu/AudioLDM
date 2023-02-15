@@ -1,15 +1,16 @@
+import json
+import logging
+import os
+import pathlib
+import random
+
 import numpy as np
 import torch
 from torch import nn as nn
 from torchvision.ops.misc import FrozenBatchNorm2d
-import logging
 
 # import h5py
 from tqdm import tqdm
-import random
-import json
-import os
-import pathlib
 
 # TODO: (yusong) this not a good place to store those information and does not scale. Need to be fixed later.
 dataset_split = {
@@ -318,9 +319,8 @@ def load_json(name):
     return data
 
 
-from multiprocessing import Process, Manager
-from multiprocessing import Process, Value, Array
 from ctypes import c_wchar
+from multiprocessing import Array, Manager, Process, Value
 
 
 def load_class_label(path):

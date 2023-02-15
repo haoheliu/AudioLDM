@@ -8,11 +8,11 @@ os.environ["NUMBA_CACHE_DIR"] = "/tmp/"
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchlibrosa.stft import Spectrogram, LogmelFilterBank
 from torchlibrosa.augmentation import SpecAugmentation
+from torchlibrosa.stft import LogmelFilterBank, Spectrogram
 
+from .feature_fusion import AFF, DAF, iAFF
 from .utils import do_mixup, interpolate, pad_framewise_output
-from .feature_fusion import iAFF, AFF, DAF
 
 
 def init_layer(layer):
@@ -32,7 +32,6 @@ def init_bn(bn):
 
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
-
         super(ConvBlock, self).__init__()
 
         self.conv1 = nn.Conv2d(
@@ -65,7 +64,6 @@ class ConvBlock(nn.Module):
         init_bn(self.bn2)
 
     def forward(self, input, pool_size=(2, 2), pool_type="avg"):
-
         x = input
         x = F.relu_(self.bn1(self.conv1(x)))
         x = F.relu_(self.bn2(self.conv2(x)))
@@ -85,7 +83,6 @@ class ConvBlock(nn.Module):
 
 class ConvBlock5x5(nn.Module):
     def __init__(self, in_channels, out_channels):
-
         super(ConvBlock5x5, self).__init__()
 
         self.conv1 = nn.Conv2d(
@@ -106,7 +103,6 @@ class ConvBlock5x5(nn.Module):
         init_bn(self.bn1)
 
     def forward(self, input, pool_size=(2, 2), pool_type="avg"):
-
         x = input
         x = F.relu_(self.bn1(self.conv1(x)))
         if pool_type == "max":
@@ -181,7 +177,6 @@ class Cnn14(nn.Module):
         enable_fusion=False,
         fusion_type="None",
     ):
-
         super(Cnn14, self).__init__()
 
         window = "hann"
@@ -439,7 +434,6 @@ class Cnn6(nn.Module):
         enable_fusion=False,
         fusion_type="None",
     ):
-
         super(Cnn6, self).__init__()
 
         window = "hann"
@@ -566,7 +560,6 @@ class Cnn10(nn.Module):
         enable_fusion=False,
         fusion_type="None",
     ):
-
         super(Cnn10, self).__init__()
 
         window = "hann"

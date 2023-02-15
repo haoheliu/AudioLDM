@@ -6,7 +6,7 @@
 @Contact :   haoheliu@gmail.com
 @License :   (C)Copyright 2020-2100
 
-@Modify Time      @Author    @Version    @Desciption
+@Modify Time      @Author    @Version    @Description
 ------------      -------    --------    -----------
 9/6/21 5:16 PM   Haohe Liu      1.0         None
 """
@@ -22,7 +22,7 @@ import os
 import sys
 from shutil import rmtree
 
-from setuptools import find_packages, setup, Command
+from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "audioldm"
