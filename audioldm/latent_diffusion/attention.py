@@ -1,9 +1,10 @@
-from inspect import isfunction
 import math
+from inspect import isfunction
+
 import torch
 import torch.nn.functional as F
-from torch import nn
 from einops import rearrange
+from torch import nn
 
 from audioldm.latent_diffusion.util import checkpoint
 

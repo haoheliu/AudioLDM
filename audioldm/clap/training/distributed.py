@@ -1,7 +1,7 @@
 import os
+import socket
 
 import torch
-import socket
 
 try:
     import horovod.torch as hvd

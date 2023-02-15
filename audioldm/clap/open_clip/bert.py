@@ -1,4 +1,4 @@
-from transformers import BertTokenizer, BertModel
+from transformers import BertModel, BertTokenizer
 
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 model = BertModel.from_pretrained("bert-base-uncased")
@@ -12,7 +12,7 @@ def bert_embeddings(text):
     return output
 
 
-from transformers import RobertaTokenizer, RobertaModel
+from transformers import RobertaModel, RobertaTokenizer
 
 tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
 model = RobertaModel.from_pretrained("roberta-base")
@@ -26,7 +26,7 @@ def Roberta_embeddings(text):
     return output
 
 
-from transformers import BartTokenizer, BartModel
+from transformers import BartModel, BartTokenizer
 
 tokenizer = BartTokenizer.from_pretrained("facebook/bart-base")
 model = BartModel.from_pretrained("facebook/bart-base")

@@ -1,11 +1,10 @@
+import os
 import sys
 
-import os
-import torch
 import librosa
+import torch
 from open_clip import create_model
-from training.data import get_audio_features
-from training.data import int16_to_float32, float32_to_int16
+from training.data import float32_to_int16, get_audio_features, int16_to_float32
 from transformers import RobertaTokenizer
 
 tokenize = RobertaTokenizer.from_pretrained("roberta-base")
@@ -54,7 +53,6 @@ def infer_text():
 
 
 def infer_audio():
-
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     precision = "fp32"
     amodel = "HTSAT-tiny"  # or 'PANN-14'

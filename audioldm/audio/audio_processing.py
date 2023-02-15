@@ -1,6 +1,6 @@
-import torch
-import numpy as np
 import librosa.util as librosa_util
+import numpy as np
+import torch
 from scipy.signal import get_window
 
 

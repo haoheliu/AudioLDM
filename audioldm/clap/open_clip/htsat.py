@@ -5,26 +5,23 @@
 # below codes are based and referred from https://github.com/microsoft/Swin-Transformer
 # Swin Transformer for Computer Vision: https://arxiv.org/pdf/2103.14030.pdf
 
+import collections.abc
+import math
+import random
+import warnings
+from itertools import repeat
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from itertools import repeat
-import collections.abc
-import math
-import warnings
-
-from torch.nn.init import _calculate_fan_in_and_fan_out
 import torch.utils.checkpoint as checkpoint
-
-import random
-
-from torchlibrosa.stft import Spectrogram, LogmelFilterBank
+from torch.nn.init import _calculate_fan_in_and_fan_out
 from torchlibrosa.augmentation import SpecAugmentation
+from torchlibrosa.stft import LogmelFilterBank, Spectrogram
 
-from itertools import repeat
+from .feature_fusion import AFF, DAF, iAFF
 from .utils import do_mixup, interpolate
 
-from .feature_fusion import iAFF, AFF, DAF
 
 # from PyTorch internals
 def _ntuple(n):
@@ -372,7 +369,6 @@ class WindowAttention(nn.Module):
         attn_drop=0.0,
         proj_drop=0.0,
     ):
-
         super().__init__()
         self.dim = dim
         self.window_size = window_size  # Wh, Ww
@@ -716,7 +712,6 @@ class BasicLayer(nn.Module):
         use_checkpoint=False,
         norm_before_mlp="ln",
     ):
-
         super().__init__()
         self.dim = dim
         self.input_resolution = input_resolution
@@ -1127,7 +1122,6 @@ class HTSAT_Swin_Transformer(nn.Module):
     def forward(
         self, x: torch.Tensor, mixup_lambda=None, infer_mode=False, device=None
     ):  # out_feat_keys: List[str] = None):
-
         if self.enable_fusion and x["longer"].sum() == 0:
             # if no audio is longer than 10s, then randomly select one audio to be longer
             x["longer"][torch.randint(0, x["longer"].shape[0], (1,))] = True
@@ -1252,7 +1246,6 @@ class HTSAT_Swin_Transformer(nn.Module):
 
 def create_htsat_model(audio_cfg, enable_fusion=False, fusion_type="None"):
     try:
-
         assert audio_cfg.model_name in [
             "tiny",
             "base",

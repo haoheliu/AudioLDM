@@ -5,15 +5,15 @@ Adapted from https://github.com/openai/CLIP. Originally MIT License, Copyright (
 
 import os
 import warnings
-from typing import Union, List
+from typing import List, Union
 
 import torch
 
 from .model import build_model_from_openai_state_dict
 from .pretrained import (
+    download_pretrained,
     get_pretrained_url,
     list_pretrained_tag_models,
-    download_pretrained,
 )
 
 __all__ = ["list_openai_models", "load_openai_model"]

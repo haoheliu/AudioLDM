@@ -15,6 +15,7 @@ except ImportError:
     wandb = None
 
 from open_clip import ClipLoss, gather_features
+
 from .distributed import is_master
 from .zero_shot import zero_shot_eval
 
@@ -382,7 +383,10 @@ def evaluate(model, data, epoch, args, tb_writer=None):
                                 mlp_loss=args.clap_mlploss,
                             )
                         else:
-                            (audio_features, text_features,) = gather_features(
+                            (
+                                audio_features,
+                                text_features,
+                            ) = gather_features(
                                 audio_features=audio_features,
                                 text_features=text_features,
                                 local_loss=False,

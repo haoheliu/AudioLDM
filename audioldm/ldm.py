@@ -1,14 +1,14 @@
 import os
 
-import torch
 import numpy as np
+import torch
 from tqdm import tqdm
-from audioldm.utils import default, instantiate_from_config, save_wave
-from audioldm.latent_diffusion.ddpm import DDPM
-from audioldm.variational_autoencoder.distributions import DiagonalGaussianDistribution
-from audioldm.latent_diffusion.util import noise_like
+
 from audioldm.latent_diffusion.ddim import DDIMSampler
-import os
+from audioldm.latent_diffusion.ddpm import DDPM
+from audioldm.latent_diffusion.util import noise_like
+from audioldm.utils import default, instantiate_from_config, save_wave
+from audioldm.variational_autoencoder.distributions import DiagonalGaussianDistribution
 
 
 def disabled_train(self, mode=True):
@@ -246,7 +246,6 @@ class LatentDiffusion(DDPM):
         return self.first_stage_model.encode(x)
 
     def apply_model(self, x_noisy, t, cond, return_ids=False):
-
         if isinstance(cond, dict):
             # hybrid case, cond is exptected to be a dict
             pass
@@ -481,7 +480,6 @@ class LatentDiffusion(DDPM):
         start_T=None,
         log_every_t=None,
     ):
-
         if not log_every_t:
             log_every_t = self.log_every_t
         device = self.betas.device
@@ -593,7 +591,6 @@ class LatentDiffusion(DDPM):
         mask=None,
         **kwargs,
     ):
-
         if mask is not None:
             shape = (self.channels, mask.size()[-2], mask.size()[-1])
         else:

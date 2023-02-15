@@ -1,8 +1,8 @@
-import os
 import json
+import os
 
-import torch
 import numpy as np
+import torch
 
 import audioldm.hifigan as hifigan
 

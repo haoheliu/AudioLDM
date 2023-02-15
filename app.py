@@ -1,6 +1,7 @@
 import gradio as gr
 import numpy as np
-from audioldm import text_to_audio, build_model
+
+from audioldm import build_model, text_to_audio
 
 # from share_btn import community_icon_html, loading_icon_html, share_js
 

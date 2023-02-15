@@ -9,10 +9,10 @@ import torch.nn as nn
 try:
     import timm
     from timm.models.layers import Mlp, to_2tuple
-    from timm.models.layers.attention_pool2d import RotAttentionPool2d
     from timm.models.layers.attention_pool2d import (
         AttentionPool2d as AbsAttentionPool2d,
     )
+    from timm.models.layers.attention_pool2d import RotAttentionPool2d
 except ImportError as e:
     timm = None
 
@@ -88,7 +88,7 @@ class TimmModel(nn.Module):
             # NOTE: partial freeze requires latest timm (master) branch and is subject to change
             try:
                 # FIXME import here until API stable and in an official release
-                from timm.models.helpers import group_parameters, group_modules
+                from timm.models.helpers import group_modules, group_parameters
             except ImportError:
                 raise RuntimeError(
                     "Please install latest timm `pip install git+https://github.com/rwightman/pytorch-image-models`"

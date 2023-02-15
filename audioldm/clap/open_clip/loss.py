@@ -1,10 +1,12 @@
 from multiprocessing.sharedctypes import Value
+
+import numpy as np
 import torch
 import torch.distributed.nn
-from torch import distributed as dist, nn as nn
+from sklearn.metrics import accuracy_score, average_precision_score, roc_auc_score
+from torch import distributed as dist
+from torch import nn as nn
 from torch.nn import functional as F
-import numpy as np
-from sklearn.metrics import average_precision_score, roc_auc_score, accuracy_score
 
 try:
     import horovod.torch as hvd

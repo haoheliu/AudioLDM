@@ -1,10 +1,9 @@
 import importlib
-
+import os
+import time
 from inspect import isfunction
 
-import os
 import soundfile as sf
-import time
 
 
 def get_time():
@@ -13,7 +12,9 @@ def get_time():
 
 
 def seed_everything(seed):
-    import random, os
+    import os
+    import random
+
     import numpy as np
     import torch
 
