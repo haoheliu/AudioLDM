@@ -21,7 +21,7 @@ Generate speech, sound effects, music and beyond.
 1. Prepare running environment
 ```shell
 conda create -n audioldm python=3.8; conda activate audioldm
-pip3 install audioldm==0.0.6
+pip3 install audioldm==0.0.8
 git clone https://github.com/haoheliu/AudioLDM; cd AudioLDM
 ```
 2. Start the web application (powered by Gradio)
@@ -36,7 +36,7 @@ python3 app.py
 # Optional
 conda create -n audioldm python=3.8; conda activate audioldm
 # Install AudioLDM
-pip3 install audioldm==0.0.6
+pip3 install audioldm==0.0.8
 ```
 
 2. text-to-audio generation
