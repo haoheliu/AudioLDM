@@ -52,6 +52,10 @@ audioldm -t "A hammer is hitting a wooden surface" # The default --mode is "gene
 # -t is the text AudioLDM uses for transfer. 
 # Please make sure that --file_path exist
 audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" 
+
+# Tune the value of --transfer_strength is important!
+# --transfer_strength: A value between 0 and 1. 0 means original audio without transfer, 1 means completely transfer to the audio indicated by text
+audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" --transfer_strength 0.25
 ```
 
 For more options on guidance scale, batchsize, seed, ddim steps, etc., please run
