@@ -4,7 +4,11 @@ from inspect import isfunction
 
 import os
 import soundfile as sf
+import time
 
+def get_time():
+    t = time.localtime()
+    return time.strftime("%d_%m_%Y_%H_%M_%S", t)
 
 def seed_everything(seed):
     import random, os
@@ -35,6 +39,7 @@ def save_wave(waveform, savepath, name="outwav"):
                 i,
             ),
         )
+        print("Save audio to %s" % path)
         sf.write(path, waveform[i, 0], samplerate=16000)
 
 
@@ -80,6 +85,28 @@ def default_audioldm_config():
             "version": "v1",
             "name": "default",
             "root": "/mnt/fast/nobackup/users/hl01486/projects/general_audio_generation/AudioLDM-python/config/default/latent_diffusion.yaml",
+        },
+        "preprocessing": {
+            "audio": {
+                "sampling_rate": 16000,
+                "max_wav_value": 32768
+            },
+            "stft": {
+                "filter_length": 1024,
+                "hop_length": 160,
+                "win_length": 1024
+            },
+            "mel": {
+                "n_mel_channels": 64,
+                "mel_fmin": 0,
+                "mel_fmax": 8000,
+                "freqm": 0,
+                "timem": 0,
+                "blur": False,
+                "mean": -4.63,
+                "std": 2.74,
+                "target_length": 1024
+            }
         },
         "model": {
             "device": "cuda",

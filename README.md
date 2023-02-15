@@ -13,6 +13,10 @@ Generate speech, sound effects, music and beyond.
 2. Try to use different random seeds, which can affect the generation quality significantly sometimes.
 3. It's best to use general terms like 'man' or 'woman' instead of specific names for individuals or abstract objects that humans may not be familiar with, such as 'mummy'.
 
+# Change Log
+
+**2023-02-15**: Add audio style transfer. Add more options on generation.
+
 ## Web APP
 1. Prepare running environment
 ```shell
@@ -38,10 +42,19 @@ pip3 install audioldm==0.0.6
 2. text-to-audio generation
 ```python
 # Test run
-audioldm -t "A hammer is hitting a wooden surface"
+audioldm -t "A hammer is hitting a wooden surface" # The default --mode is "generation"
 ```
 
-For more options on guidance scale, batchsize, seed, etc, please run
+3. audio-to-audio style transfer
+```python
+# Test run
+# --file_path is the original audio file for transfer
+# -t is the text AudioLDM uses for transfer. 
+# Please make sure that --file_path exist
+audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" 
+```
+
+For more options on guidance scale, batchsize, seed, ddim steps, etc., please run
 ```shell
 audioldm -h
 ```
@@ -59,7 +72,7 @@ Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using 
 - [ ] Add AudioCaps finetuned AudioLDM-S model
 - [x] Build pip installable package for commandline use
 - [x] Build Gradio web application
-- [ ] Add text-guided style transfer
+- [x] Add text-guided style transfer
 - [ ] Add audio super-resolution
 - [ ] Add audio inpainting
 
