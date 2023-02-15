@@ -19,6 +19,7 @@ def default_bpe():
         os.path.dirname(os.path.abspath(__file__)), "bpe_simple_vocab_16e6.txt.gz"
     )
 
+
 @lru_cache()
 def bytes_to_unicode():
     """

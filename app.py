@@ -1,9 +1,10 @@
 import gradio as gr
 import numpy as np
 from audioldm import text_to_audio, build_model
+
 # from share_btn import community_icon_html, loading_icon_html, share_js
 
-model_id="haoheliu/AudioLDM-S-Full"
+model_id = "haoheliu/AudioLDM-S-Full"
 
 audioldm = build_model()
 # audioldm=None
@@ -15,22 +16,33 @@ audioldm = build_model()
 #     # append the new user input tokens to the chat history
 #     bot_input_ids = torch.cat([torch.LongTensor(history), new_user_input_ids], dim=-1)
 
-#     # generate a response 
+#     # generate a response
 #     history = model.generate(bot_input_ids, max_length=1000, pad_token_id=tokenizer.eos_token_id).tolist()
 
 #     # convert the tokens to text, and then split the responses into lines
 #     response = tokenizer.decode(history[0]).split("<|endoftext|>")
 #     response = [(response[i], response[i+1]) for i in range(0, len(response)-1, 2)]  # convert to tuples of list
 #     return response, history
-  
+
+
 def text2audio(text, duration, guidance_scale, random_seed, n_candidates):
     # print(text, length, guidance_scale)
-    waveform = text_to_audio(audioldm, text, random_seed, duration=duration, guidance_scale=guidance_scale, n_candidate_gen_per_text=int(n_candidates)) # [bs, 1, samples]
-    waveform = [gr.make_waveform((16000, wave[0]), bg_image="bg.png") for wave in waveform]
+    waveform = text_to_audio(
+        audioldm,
+        text,
+        random_seed,
+        duration=duration,
+        guidance_scale=guidance_scale,
+        n_candidate_gen_per_text=int(n_candidates),
+    )  # [bs, 1, samples]
+    waveform = [
+        gr.make_waveform((16000, wave[0]), bg_image="bg.png") for wave in waveform
+    ]
     # waveform = [(16000, np.random.randn(16000)), (16000, np.random.randn(16000))]
-    if(len(waveform) == 1):
-      waveform = waveform[0]
+    if len(waveform) == 1:
+        waveform = waveform[0]
     return waveform
+
 
 # iface = gr.Interface(fn=text2audio, inputs=[
 #         gr.Textbox(value="A man is speaking in a huge room", max_lines=1),
@@ -206,17 +218,39 @@ with iface:
     with gr.Group():
         with gr.Box():
             ############# Input
-            textbox = gr.Textbox(value="A hammer is hitting a wooden surface", max_lines=1, label="Input your text here. Please ensure it is descriptive and of moderate length.", elem_id="prompt-in")
+            textbox = gr.Textbox(
+                value="A hammer is hitting a wooden surface",
+                max_lines=1,
+                label="Input your text here. Please ensure it is descriptive and of moderate length.",
+                elem_id="prompt-in",
+            )
 
             with gr.Accordion("Click to modify detailed configurations", open=False):
-              seed = gr.Number(value=42, label="Change this value (any integer number) will lead to a different generation result.")
-              duration = gr.Slider(2.5, 10, value=5, step=2.5, label="Duration (seconds)")
-              guidance_scale = gr.Slider(0, 5, value=2.5, step=0.5, label="Guidance scale (Large => better quality and relavancy to text; Small => better diversity)")
-              n_candidates = gr.Slider(1, 5, value=3, step=1, label="Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier computation")
+                seed = gr.Number(
+                    value=42,
+                    label="Change this value (any integer number) will lead to a different generation result.",
+                )
+                duration = gr.Slider(
+                    2.5, 10, value=5, step=2.5, label="Duration (seconds)"
+                )
+                guidance_scale = gr.Slider(
+                    0,
+                    5,
+                    value=2.5,
+                    step=0.5,
+                    label="Guidance scale (Large => better quality and relavancy to text; Small => better diversity)",
+                )
+                n_candidates = gr.Slider(
+                    1,
+                    5,
+                    value=3,
+                    step=1,
+                    label="Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier computation",
+                )
             ############# Output
             # outputs=gr.Audio(label="Output", type="numpy")
-            outputs=gr.Video(label="Output", elem_id="output-video")
-            
+            outputs = gr.Video(label="Output", elem_id="output-video")
+
             # with gr.Group(elem_id="container-advanced-btns"):
             #   # advanced_button = gr.Button("Advanced options", elem_id="advanced-btn")
             #   with gr.Group(elem_id="share-btn-container"):
@@ -231,11 +265,15 @@ with iface:
         #     loading_icon = gr.HTML(loading_icon_html)
         #     share_button = gr.Button("Share to community", elem_id="share-btn")
 
-        btn.click(text2audio, inputs=[
-                  textbox, duration, guidance_scale, seed, n_candidates], outputs=[outputs])
+        btn.click(
+            text2audio,
+            inputs=[textbox, duration, guidance_scale, seed, n_candidates],
+            outputs=[outputs],
+        )
 
         # share_button.click(None, [], [], _js=share_js)
-        gr.HTML('''
+        gr.HTML(
+            """
         <div class="footer" style="text-align: center; max-width: 700px; margin: 0 auto;">
                     <p>Follow the latest update of AudioLDM on our<a href="https://github.com/haoheliu/AudioLDM" style="text-decoration: underline;" target="_blank"> Github repo</a>
                     </p>
@@ -243,14 +281,28 @@ with iface:
                     <p>Model by <a href="https://twitter.com/LiuHaohe" style="text-decoration: underline;" target="_blank">Haohe Liu</a></p>
                     <br>
         </div>
-        ''')
-        gr.Examples([
-            ["A hammer is hitting a wooden surface", 5, 2.5, 45, 3],
-            ["Peaceful and calming ambient music with singing bowl and other instruments.", 5, 2.5, 45, 3],
-            ["A man is speaking in a small room.", 5, 2.5, 45, 3],
-            ["A female is speaking followed by footstep sound", 5, 2.5, 45, 3],
-            ["Wooden table tapping sound followed by water pouring sound.", 5, 2.5, 45, 3],
-        ],
+        """
+        )
+        gr.Examples(
+            [
+                ["A hammer is hitting a wooden surface", 5, 2.5, 45, 3],
+                [
+                    "Peaceful and calming ambient music with singing bowl and other instruments.",
+                    5,
+                    2.5,
+                    45,
+                    3,
+                ],
+                ["A man is speaking in a small room.", 5, 2.5, 45, 3],
+                ["A female is speaking followed by footstep sound", 5, 2.5, 45, 3],
+                [
+                    "Wooden table tapping sound followed by water pouring sound.",
+                    5,
+                    2.5,
+                    45,
+                    3,
+                ],
+            ],
             fn=text2audio,
             inputs=[textbox, duration, guidance_scale, seed, n_candidates],
             outputs=[outputs],
