@@ -1,0 +1,16 @@
+torch>=1.13.0
+torchaudio>=0.13.0
+torchvision>=0.14.0
+tqdm
+gradio
+pyyaml
+einops
+numpy<=1.23.5
+soundfile
+librosa
+scipy
+pandas
+torchlibrosa
+transformers
+ftfy
+tuneflow-py==0.0.8
