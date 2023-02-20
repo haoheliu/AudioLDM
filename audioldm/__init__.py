@@ -4,7 +4,23 @@ from .pipeline import *
 
 import os
 import urllib.request
+import progressbar
 
+class MyProgressBar():
+    def __init__(self):
+        self.pbar = None
+
+    def __call__(self, block_num, block_size, total_size):
+        if not self.pbar:
+            self.pbar=progressbar.ProgressBar(maxval=total_size)
+            self.pbar.start()
+
+        downloaded = block_num * block_size
+        if downloaded < total_size:
+            self.pbar.update(downloaded)
+        else:
+            self.pbar.finish()
+            
 meta = {
     "audioldm": {
         "path": os.path.join(
@@ -15,11 +31,11 @@ meta = {
     },
 }
 
-if not os.path.exists(meta["audioldm"]["path"]):
+if not os.path.exists(meta["audioldm"]["path"]) or os.path.getsize(meta["audioldm"]["path"]) < 2*10**9:
     os.makedirs(os.path.dirname(meta["audioldm"]["path"]), exist_ok=True)
     print("Downloading the main structure of audioldm")
 
-    urllib.request.urlretrieve(meta["audioldm"]["url"], meta["audioldm"]["path"])
+    urllib.request.urlretrieve(meta["audioldm"]["url"], meta["audioldm"]["path"], MyProgressBar())
     print(
         "Weights downloaded in: {} Size: {}".format(
             meta["audioldm"]["path"],
