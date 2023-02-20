@@ -31,7 +31,7 @@ URL = "https://github.com/haoheliu/audioldm"
 EMAIL = "haoheliu@gmail.com"
 AUTHOR = "Haohe Liu"
 REQUIRES_PYTHON = ">=3.7.0"
-VERSION = "0.0.10"
+VERSION = "0.0.11"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -44,10 +44,10 @@ REQUIRED = [
     "einops",
     "numpy<=1.23.5",
     "soundfile",
-    "librosa",
+    "librosa==0.9.2",
     "scipy",
     "pandas",
-    "torchlibrosa",
+    "torchlibrosa==0.0.9",
     "transformers",
     "progressbar",
     "ftfy",
