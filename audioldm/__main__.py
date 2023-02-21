@@ -5,6 +5,11 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
+CACHE_DIR = os.getenv(
+    "AUDIOLDM_CACHE_DIR",
+    os.path.join(os.path.expanduser("~"), ".cache"))
+
+
 parser.add_argument(
     "--mode",
     type=str,
@@ -56,8 +61,8 @@ parser.add_argument(
     required=False,
     help="The path to the pretrained .ckpt model",
     default=os.path.join(
-                os.path.expanduser("~"),
-                ".cache/audioldm/audioldm-s-full.ckpt",
+                CACHE_DIR,
+                "audioldm-s-full.ckpt",
             ),
 )
 

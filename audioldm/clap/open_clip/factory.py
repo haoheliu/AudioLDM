@@ -15,6 +15,8 @@ from .transform import image_transform
 
 _MODEL_CONFIG_PATHS = [Path(__file__).parent / f"model_configs/"]
 _MODEL_CONFIGS = {}  # directory (model_name: config) of model architecture configs
+CACHE_DIR = os.getenv("AUDIOLDM_CACHE_DIR", "~/.cache")
+
 
 
 def _natural_key(string_):
@@ -75,7 +77,7 @@ def create_model(
     device: torch.device = torch.device("cpu"),
     jit: bool = False,
     force_quick_gelu: bool = False,
-    openai_model_cache_dir: str = os.path.expanduser("~/.cache/clip"),
+    openai_model_cache_dir: str = os.path.expanduser(f"{CACHE_DIR}/clip"),
     skip_params=True,
     pretrained_audio: str = "",
     pretrained_text: str = "",
