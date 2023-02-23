@@ -7,10 +7,10 @@ pyyaml
 einops
 numpy<=1.23.5
 soundfile
-librosa
+librosa==0.9.2
 scipy
 pandas
-torchlibrosa
+torchlibrosa==0.0.9
 transformers
 ftfy
-tuneflow-py==0.0.8
+tuneflow-py==0.1.0

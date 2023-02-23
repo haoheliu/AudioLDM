@@ -15,14 +15,14 @@ meta = {
     },
 }
 
-if not os.path.exists(meta["audioldm"]["path"]):
-    os.makedirs(os.path.dirname(meta["audioldm"]["path"]), exist_ok=True)
-    print("Downloading the main structure of audioldm")
+# if not os.path.exists(meta["audioldm"]["path"]):
+#     os.makedirs(os.path.dirname(meta["audioldm"]["path"]), exist_ok=True)
+#     print("Downloading the main structure of audioldm")
 
-    urllib.request.urlretrieve(meta["audioldm"]["url"], meta["audioldm"]["path"])
-    print(
-        "Weights downloaded in: {} Size: {}".format(
-            meta["audioldm"]["path"],
-            os.path.getsize(meta["audioldm"]["path"]),
-        )
-    )
+#     urllib.request.urlretrieve(meta["audioldm"]["url"], meta["audioldm"]["path"])
+#     print(
+#         "Weights downloaded in: {} Size: {}".format(
+#             meta["audioldm"]["path"],
+#             os.path.getsize(meta["audioldm"]["path"]),
+#         )
+#     )

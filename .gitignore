@@ -1,0 +1,4 @@
+*:Zone.Identifier
+output
+*.pyc
+ckpt
