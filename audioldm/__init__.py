@@ -6,6 +6,12 @@ import os
 import urllib.request
 import progressbar
 
+
+CACHE_DIR = os.getenv(
+    "AUDIOLDM_CACHE_DIR",
+    os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
+
+
 class MyProgressBar():
     def __init__(self):
         self.pbar = None
@@ -24,8 +30,8 @@ class MyProgressBar():
 meta = {
     "audioldm": {
         "path": os.path.join(
-            os.path.expanduser("~"),
-            ".cache/audioldm/audioldm-s-full.ckpt",
+            CACHE_DIR,
+            "audioldm-s-full.ckpt",
         ),
         "url": "https://zenodo.org/record/7600541/files/audioldm-s-full?download=1",
     },
@@ -33,7 +39,7 @@ meta = {
 
 if not os.path.exists(meta["audioldm"]["path"]) or os.path.getsize(meta["audioldm"]["path"]) < 2*10**9:
     os.makedirs(os.path.dirname(meta["audioldm"]["path"]), exist_ok=True)
-    print("Downloading the main structure of audioldm")
+    print(f"Downloading the main structure of audioldm into {os.path.dirname(meta['audioldm']['path'])}")
 
     urllib.request.urlretrieve(meta["audioldm"]["url"], meta["audioldm"]["path"], MyProgressBar())
     print(

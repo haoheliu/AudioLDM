@@ -18,6 +18,9 @@ from .pretrained import (
 
 __all__ = ["list_openai_models", "load_openai_model"]
 
+CACHE_DIR = os.getenv("AUDIOLDM_CACHE_DIR", "~/.cache")
+
+
 
 def list_openai_models() -> List[str]:
     """Returns the names of available CLIP models"""
@@ -29,7 +32,7 @@ def load_openai_model(
     model_cfg,
     device: Union[str, torch.device] = "cuda" if torch.cuda.is_available() else "cpu",
     jit=True,
-    cache_dir=os.path.expanduser("~/.cache/clip"),
+    cache_dir=os.path.expanduser(f"{CACHE_DIR}/clip"),
     enable_fusion: bool = False,
     fusion_type: str = "None",
 ):

@@ -5,6 +5,8 @@ import warnings
 
 from tqdm import tqdm
 
+CACHE_DIR = os.getenv("AUDIOLDM_CACHE_DIR", "~/.cache")
+
 _RN50 = dict(
     openai="https://openaipublic.azureedge.net/clip/models/afeb0e10f9e5a86da6080e35cf09123aca3b358a0c3e3b6c78a7b63bc04b6762/RN50.pt",
     yfcc15m="https://github.com/mlfoundations/open_clip/releases/download/v0.2-weights/rn50-quickgelu-yfcc15m-455df137.pt",
@@ -112,7 +114,7 @@ def get_pretrained_url(model: str, tag: str):
     return model_pretrained[tag]
 
 
-def download_pretrained(url: str, root: str = os.path.expanduser("~/.cache/clip")):
+def download_pretrained(url: str, root: str = os.path.expanduser(f"{CACHE_DIR}/clip")):
     os.makedirs(root, exist_ok=True)
     filename = os.path.basename(url)
 

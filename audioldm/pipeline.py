@@ -15,6 +15,11 @@ from einops import repeat
 import time
 
 
+CACHE_DIR = os.getenv(
+    "AUDIOLDM_CACHE_DIR",
+    os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
+
+
 def make_batch_for_text_to_audio(text, batchsize=1):
     text = [text] * batchsize
     if batchsize < 1:
@@ -35,10 +40,7 @@ def make_batch_for_text_to_audio(text, batchsize=1):
 
 
 def build_model(
-    ckpt_path=os.path.join(
-        os.path.expanduser("~"),
-        ".cache/audioldm/audioldm-s-full.ckpt",
-    ),
+    ckpt_path=os.path.join(CACHE_DIR, "audioldm-s-full.ckpt"),
     config=None,
 ):
     if torch.cuda.is_available():

@@ -1,4 +1,10 @@
 import argparse
+import os
+
+CACHE_DIR = os.getenv(
+    "AUDIOLDM_CACHE_DIR",
+    "~/.cache")
+
 
 
 def get_default_params(model_name):
@@ -426,7 +432,7 @@ def parse_args():
     parser.add_argument(
         "--openai-model-cache-dir",
         type=str,
-        default="~/.cache/clip",
+        default=f"{CACHE_DIR}/clip",
         help="Directory to download OpenAI models.",
     )
     parser.add_argument(
