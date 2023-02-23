@@ -17,7 +17,7 @@ import time
 
 CACHE_DIR = os.getenv(
     "AUDIOLDM_CACHE_DIR",
-    os.path.join(os.path.expanduser("~"), ".cache"))
+    os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
 
 
 def make_batch_for_text_to_audio(text, batchsize=1):

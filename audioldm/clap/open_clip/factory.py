@@ -15,7 +15,7 @@ from .transform import image_transform
 
 _MODEL_CONFIG_PATHS = [Path(__file__).parent / f"model_configs/"]
 _MODEL_CONFIGS = {}  # directory (model_name: config) of model architecture configs
-CACHE_DIR = os.getenv("AUDIOLDM_CACHE_DIR", "~/.cache")
+CACHE_DIR = os.getenv("AUDIOLDM_CACHE_DIR", "~/.cache/audioldm")
 
 
 
