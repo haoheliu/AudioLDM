@@ -13,4 +13,4 @@ pandas
 torchlibrosa==0.0.9
 transformers
 ftfy
-tuneflow-py==0.1.0
+tuneflow-py>=0.1.2
