@@ -26,14 +26,7 @@ class AudioLDMPlugin(TuneflowPlugin):
         }
 
     @staticmethod
-    def plugin_display_name() -> LabelText:
-        return {
-            "zh": "[AI] 文字生成音频 (AudioLDM)",
-            "en": "[AI] Text-to-Audio (AudioLDM)"
-        }
-
-    def params(self) -> Dict[str, ParamDescriptor]:
-        # TODO: Limit prompt length
+    def params(song: Song, read_apis: ReadAPIs) -> Dict[str, ParamDescriptor]:
         return {
             "prompt": {
                 "displayName": {
@@ -70,7 +63,7 @@ class AudioLDMPlugin(TuneflowPlugin):
                     "type": WidgetType.InputNumber.value,
                     "config": {
                         "minValue": 0.1,
-                        "maxValue": 5,
+                        "maxValue": 10,
                         "step": 0.1
                     }
                 }
@@ -85,20 +78,20 @@ class AudioLDMPlugin(TuneflowPlugin):
                     "type": WidgetType.InputNumber.value,
                     "config": {
                         "minValue": 2.5,
-                        "maxValue": 100,
+                        "maxValue": 10,
                         "step": 2.5
                     }
                 }
             }
         }
 
-    def init(self, song: Song, read_apis: ReadAPIs):
+    @staticmethod
+    def run(song: Song, params: Dict[str, Any], read_apis: ReadAPIs):
         model_path = str(Path(__file__).parent.joinpath('ckpt/ldm_trimmed.ckpt').absolute())
-        self.model = build_model(ckpt_path=model_path)
-
-    def run(self, song: Song, params: Dict[str, Any], read_apis: ReadAPIs):
+        model = build_model(ckpt_path=model_path)
         # TODO: Support prompt i18n
-        file_bytes_list = self._text2audio(
+        file_bytes_list = AudioLDMPlugin._text2audio(
+            model,
             text=params["prompt"],
             duration=params["duration"],
             guidance_scale=params["guidance_scale"],
@@ -119,10 +112,11 @@ class AudioLDMPlugin(TuneflowPlugin):
             except:
                 print(traceback.format_exc())
 
-    def _text2audio(self, text, duration, guidance_scale, random_seed):
+    @staticmethod
+    def _text2audio(model, text, duration, guidance_scale, random_seed):
         # print(text, length, guidance_scale)
         waveform = text_to_audio(
-            self.model,
+            model,
             text=text,
             seed=random_seed,
             duration=duration,
@@ -130,9 +124,10 @@ class AudioLDMPlugin(TuneflowPlugin):
             n_candidate_gen_per_text=3,
             batchsize=1,
         )
-        return self._save_wave(waveform)
+        return AudioLDMPlugin._save_wave(waveform)
 
-    def _save_wave(self, waveform):
+    @staticmethod
+    def _save_wave(waveform):
         saved_file_bytes: List[BytesIO] = []
         for i in range(waveform.shape[0]):
             file_bytes = BytesIO()

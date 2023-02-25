@@ -1,0 +1,28 @@
+{
+    "plugins": [
+      {
+        "providerId": "andantei",
+        "providerDisplayName": {
+          "zh": "Andantei行板",
+          "en": "Andantei"
+        },
+        "pluginId": "audioldm-generate",
+        "pluginDisplayName": {
+            "zh": "[AI] 文字生成音频 (AudioLDM)",
+            "en": "[AI] Text-to-Audio (AudioLDM)"
+        },
+        "pluginDescription": {
+            "zh": "用一段提示词生成音频或音乐",
+            "en": "Generate audio or music from a short prompt text"
+        },
+        "version": "1.0.0",
+        "supportedPlatforms": ["web", "desktop"],
+        "isInDevelopment": true,
+        "minRequiredDesktopVersion": "1.8.9",
+        "options": {
+          "allowReset": true,
+          "allowManualApplyAdjust": true
+        }
+      }
+    ]
+}
