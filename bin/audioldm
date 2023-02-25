@@ -3,6 +3,10 @@ import os
 from audioldm import text_to_audio, style_transfer, build_model, save_wave, get_time
 import argparse
 
+CACHE_DIR = os.getenv(
+    "AUDIOLDM_CACHE_DIR",
+    os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
@@ -19,7 +23,7 @@ parser.add_argument(
     "--text",
     type=str,
     required=False,
-    default="A hammer is hitting a wooden surface",
+    default="",
     help="Text prompt to the model for audio generation",
 )
 
@@ -29,7 +33,7 @@ parser.add_argument(
     type=str,
     required=False,
     default=None,
-    help="Original audio file for style transfer",
+    help="(--mode transfer): Original audio file for style transfer; Or (--mode generation): the guidance audio file for generating simialr audio",
 )
 
 parser.add_argument(
@@ -56,8 +60,8 @@ parser.add_argument(
     required=False,
     help="The path to the pretrained .ckpt model",
     default=os.path.join(
-                os.path.expanduser("~"),
-                ".cache/audioldm/audioldm-s-full.ckpt",
+                CACHE_DIR,
+                "audioldm-s-full.ckpt",
             ),
 )
 
@@ -77,7 +81,6 @@ parser.add_argument(
     default=200,
     help="The sampling step for DDIM",
 )
-
 
 parser.add_argument(
     "-gs",
@@ -116,7 +119,16 @@ parser.add_argument(
 
 args = parser.parse_args()
 assert args.duration % 2.5 == 0, "Duration must be a multiple of 2.5"
-save_path = os.path.join(args.save_path, args.mode)
+
+mode = args.mode
+if(mode == "generation" and args.file_path is not None):
+    mode = "generation_audio_to_audio"
+    if(len(args.text) > 0):
+        print("Warning: You have specified the --file_path. --text will be ignored")
+        args.text = ""
+        
+save_path = os.path.join(args.save_path, mode)
+
 if(args.file_path is not None):
     save_path = os.path.join(save_path, os.path.basename(args.file_path.split(".")[0]))
 
@@ -133,6 +145,7 @@ if(args.mode == "generation"):
     waveform = text_to_audio(
         audioldm,
         text,
+        args.file_path,
         random_seed,
         duration=duration,
         guidance_scale=guidance_scale,
@@ -140,6 +153,7 @@ if(args.mode == "generation"):
         n_candidate_gen_per_text=n_candidate_gen_per_text,
         batchsize=args.batchsize,
     )
+    
 elif(args.mode == "transfer"):
     assert args.file_path is not None
     assert os.path.exists(args.file_path), "The original audio file \'%s\' for style transfer does not exist." % args.file_path

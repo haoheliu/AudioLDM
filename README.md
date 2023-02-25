@@ -15,6 +15,7 @@ Generate speech, sound effects, music and beyond.
 
 # Change Log
 
+**2023-02-24**: Add audio-to-audio generation. Add test cases.
 **2023-02-15**: Add audio style transfer. Add more options on generation.
 
 ## Web APP
@@ -39,19 +40,27 @@ conda create -n audioldm python=3.8; conda activate audioldm
 pip3 install audioldm
 ```
 
-2. text-to-audio generation
-```python
+2. text-to-audio generation: generate an audio guided by a text
+```shell
 # Test run
 audioldm -t "A hammer is hitting a wooden surface" # The default --mode is "generation"
+# Result will be saved in "./output/generation"
 ```
 
-3. audio-to-audio style transfer
-```python
+3. audio-to-audio generation: generate an audio guided by an audio (output will have similar audio events as the input audio file).
+```shell
+audioldm --file_path trumpet.wav
+# Result will be saved in "./output/generation_audio_to_audio/trumpet"
+```
+
+4. audio-to-audio style transfer
+```shell
 # Test run
 # --file_path is the original audio file for transfer
 # -t is the text AudioLDM uses for transfer. 
 # Please make sure that --file_path exist
 audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" 
+# Result will be saved in "./output/transfer/trumpet"
 
 # Tune the value of --transfer_strength is important!
 # --transfer_strength: A value between 0 and 1. 0 means original audio without transfer, 1 means completely transfer to the audio indicated by text
@@ -70,9 +79,9 @@ optional arguments:
   -h, --help            show this help message and exit
   --mode {generation,transfer}
                         generation: text-to-audio generation; transfer: style transfer. DEFAULT "generation"
-  -t TEXT, --text TEXT  Text prompt to the model for audio generation
+  -t TEXT, --text TEXT  Text prompt to the model for audio generation. DEFAULT ""
   -f FILE_PATH, --file_path FILE_PATH
-                        Original audio file for style transfer
+                        (--mode transfer): Original audio file for style transfer; Or (--mode generation): the guidance audio file for generating simialr audio. DEFAULT None
   --transfer_strength TRANSFER_STRENGTH
                         A value between 0 and 1. 0 means original audio without transfer, 1 means completely transfer to the audio indicated by text. DEFAULT 0.5
   -s SAVE_PATH, --save_path SAVE_PATH
@@ -109,6 +118,7 @@ Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using 
 - [x] Build pip installable package for commandline use
 - [x] Build Gradio web application
 - [x] Add text-guided style transfer
+- [x] Add audio-to-audio generation
 - [ ] Add audio super-resolution
 - [ ] Add audio inpainting
 

@@ -8,26 +8,29 @@ from tqdm import tqdm, trange
 
 from audioldm import LatentDiffusion, seed_everything
 from audioldm.utils import default_audioldm_config
-from audioldm.audio import wav_to_fbank, TacotronSTFT
+from audioldm.audio import wav_to_fbank, TacotronSTFT, read_wav_file
 from audioldm.latent_diffusion.ddim import DDIMSampler
 from einops import repeat
-
-import time
-
 
 CACHE_DIR = os.getenv(
     "AUDIOLDM_CACHE_DIR",
     os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
 
 
-def make_batch_for_text_to_audio(text, batchsize=1):
+def make_batch_for_text_to_audio(text, waveform=None, batchsize=1):
     text = [text] * batchsize
     if batchsize < 1:
         print("Warning: Batchsize must be at least 1. Batchsize is set to .")
     fbank = torch.zeros((batchsize, 1024, 64))  # Not used, here to keep the code format
     stft = torch.zeros((batchsize, 1024, 512))  # Not used
-    waveform = torch.zeros((batchsize, 160000))  # Not used
+    if(waveform is None):
+        waveform = torch.zeros((batchsize, 160000))  # Not used
+    else:
+        assert waveform.shape[0] == batchsize
+        waveform = torch.FloatTensor(waveform)
+        
     fname = [""] * batchsize  # Not used
+    
     batch = (
         fbank,
         stft,
@@ -72,14 +75,23 @@ def build_model(
     latent_diffusion.cond_stage_model.embed_mode = "text"
     return latent_diffusion
 
-
 def duration_to_latent_t_size(duration):
     return int(duration * 25.6)
 
+def set_cond_audio(latent_diffusion):
+    latent_diffusion.cond_stage_key = "waveform"
+    latent_diffusion.cond_stage_model.embed_mode="audio"
+    return latent_diffusion
 
+def set_cond_text(latent_diffusion):
+    latent_diffusion.cond_stage_key = "text"
+    latent_diffusion.cond_stage_model.embed_mode="text"
+    return latent_diffusion
+    
 def text_to_audio(
     latent_diffusion,
     text,
+    original_audio_file_path = None,
     seed=42,
     ddim_steps=200,
     duration=10,
@@ -89,9 +101,22 @@ def text_to_audio(
     config=None,
 ):
     seed_everything(int(seed))
-    batch = make_batch_for_text_to_audio(text, batchsize=batchsize)
+    
+    waveform = None
+    if(original_audio_file_path is not None):
+        waveform = read_wav_file(original_audio_file_path, int(duration * 102.4) * 160)
+        
+    batch = make_batch_for_text_to_audio(text, waveform, batchsize=batchsize)
 
     latent_diffusion.latent_t_size = duration_to_latent_t_size(duration)
+    
+    if(waveform is not None):
+        print("Generate audio that has similar content as %s" % original_audio_file_path)
+        latent_diffusion = set_cond_audio(latent_diffusion)
+    else:
+        print("Generate audio using text %s" % text)
+        latent_diffusion = set_cond_text(latent_diffusion)
+        
     with torch.no_grad():
         waveform = latent_diffusion.generate_sample(
             [batch],
@@ -101,7 +126,6 @@ def text_to_audio(
             duration=duration,
         )
     return waveform
-
 
 def style_transfer(
     latent_diffusion,
@@ -119,6 +143,8 @@ def style_transfer(
         device = torch.device("cuda:0")
     else:
         device = torch.device("cpu")
+
+    latent_diffusion = set_cond_text(latent_diffusion)
 
     if config is not None:
         assert type(config) is str

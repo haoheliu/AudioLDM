@@ -146,7 +146,8 @@ class LatentDiffusion(DDPM):
                 if isinstance(c, DiagonalGaussianDistribution):
                     c = c.mode()
             else:
-                if len(c) == 1:
+                # Text input is list
+                if type(c) == list and len(c) == 1:
                     c = self.cond_stage_model([c[0], c[0]])
                     c = c[0:1]
                 else:
@@ -665,6 +666,7 @@ class LatentDiffusion(DDPM):
                 z, c = self.get_input(
                     batch,
                     self.first_stage_key,
+                    cond_key=self.cond_stage_key,
                     return_first_stage_outputs=False,
                     force_c_encode=True,
                     return_original_cond=False,
