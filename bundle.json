@@ -16,7 +16,7 @@
             "en": "Generate audio or music from a short prompt text"
         },
         "version": "1.0.0",
-        "supportedPlatforms": ["web", "desktop"],
+        "supportedPlatforms": ["desktop"],
         "isInDevelopment": true,
         "minRequiredDesktopVersion": "1.8.9",
         "options": {
