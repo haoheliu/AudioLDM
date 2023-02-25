@@ -21,7 +21,7 @@ This repo currently suppport:
 
 # Change Log
 
-**2023-02-24**: Add audio-to-audio generation. Add test cases.
+**2023-02-24**: Add audio-to-audio generation. Add test cases. Add a pipeline (python function) for audio super-resolution and inpainting.
 
 **2023-02-15**: Add audio style transfer. Add more options on generation.
 
