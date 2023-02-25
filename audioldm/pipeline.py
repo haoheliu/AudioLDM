@@ -16,18 +16,26 @@ CACHE_DIR = os.getenv(
     "AUDIOLDM_CACHE_DIR",
     os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
 
-
-def make_batch_for_text_to_audio(text, waveform=None, batchsize=1):
+def make_batch_for_text_to_audio(text, waveform=None, fbank=None, batchsize=1):
     text = [text] * batchsize
     if batchsize < 1:
         print("Warning: Batchsize must be at least 1. Batchsize is set to .")
-    fbank = torch.zeros((batchsize, 1024, 64))  # Not used, here to keep the code format
+    
+    if(fbank is None):
+        fbank = torch.zeros((batchsize, 1024, 64))  # Not used, here to keep the code format
+    else:
+        fbank = torch.FloatTensor(fbank)
+        fbank = fbank.expand(batchsize, 1024, 64)
+        assert fbank.size(0) == batchsize
+        
     stft = torch.zeros((batchsize, 1024, 512))  # Not used
+
     if(waveform is None):
         waveform = torch.zeros((batchsize, 160000))  # Not used
     else:
-        assert waveform.shape[0] == batchsize
         waveform = torch.FloatTensor(waveform)
+        waveform = waveform.expand(batchsize, -1)
+        assert waveform.size(0) == batchsize
         
     fname = [""] * batchsize  # Not used
     
@@ -106,7 +114,7 @@ def text_to_audio(
     if(original_audio_file_path is not None):
         waveform = read_wav_file(original_audio_file_path, int(duration * 102.4) * 160)
         
-    batch = make_batch_for_text_to_audio(text, waveform, batchsize=batchsize)
+    batch = make_batch_for_text_to_audio(text, waveform=waveform, batchsize=batchsize)
 
     latent_diffusion.latent_t_size = duration_to_latent_t_size(duration)
     
@@ -210,4 +218,58 @@ def style_transfer(
                     x_samples
                 )
 
+    return waveform
+
+def super_resolution_and_inpainting(
+    latent_diffusion,
+    text,
+    original_audio_file_path = None,
+    seed=42,
+    ddim_steps=200,
+    duration=None,
+    batchsize=1,
+    guidance_scale=2.5,
+    n_candidate_gen_per_text=3,
+    time_mask_ratio_start_and_end=(0.10, 0.15), # regenerate the 10% to 15% of the time steps in the spectrogram
+    # time_mask_ratio_start_and_end=(1.0, 1.0), # no inpainting
+    # freq_mask_ratio_start_and_end=(0.75, 1.0), # regenerate the higher 75% to 100% mel bins
+    freq_mask_ratio_start_and_end=(1.0, 1.0), # no super-resolution
+    config=None,
+):
+    seed_everything(int(seed))
+    if config is not None:
+        assert type(config) is str
+        config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
+    else:
+        config = default_audioldm_config()
+    fn_STFT = TacotronSTFT(
+        config["preprocessing"]["stft"]["filter_length"],
+        config["preprocessing"]["stft"]["hop_length"],
+        config["preprocessing"]["stft"]["win_length"],
+        config["preprocessing"]["mel"]["n_mel_channels"],
+        config["preprocessing"]["audio"]["sampling_rate"],
+        config["preprocessing"]["mel"]["mel_fmin"],
+        config["preprocessing"]["mel"]["mel_fmax"],
+    )
+    
+    # waveform = read_wav_file(original_audio_file_path, None)
+    mel, _, _ = wav_to_fbank(
+        original_audio_file_path, target_length=int(duration * 102.4), fn_STFT=fn_STFT
+    )
+    
+    batch = make_batch_for_text_to_audio(text, fbank=mel[None,...], batchsize=batchsize)
+        
+    # latent_diffusion.latent_t_size = duration_to_latent_t_size(duration)
+    latent_diffusion = set_cond_text(latent_diffusion)
+        
+    with torch.no_grad():
+        waveform = latent_diffusion.generate_sample_masked(
+            [batch],
+            unconditional_guidance_scale=guidance_scale,
+            ddim_steps=ddim_steps,
+            n_candidate_gen_per_text=n_candidate_gen_per_text,
+            duration=duration,
+            time_mask_ratio_start_and_end=time_mask_ratio_start_and_end,
+            freq_mask_ratio_start_and_end=freq_mask_ratio_start_and_end
+        )
     return waveform

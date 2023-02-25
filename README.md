@@ -128,8 +128,8 @@ Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using 
 - [x] Build Gradio web application
 - [x] Add text-guided style transfer
 - [x] Add audio-to-audio generation
-- [ ] Add audio super-resolution
-- [ ] Add audio inpainting
+- [x] Add audio super-resolution
+- [x] Add audio inpainting
 
 ## Cite this work
 
