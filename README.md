@@ -1,10 +1,16 @@
-# Text-to-Audio Generation
+# :sound: Text-to-Audio Generation
 
 [![arXiv](https://img.shields.io/badge/arXiv-2109.13731-brightgreen.svg?style=flat-square)](https://arxiv.org/abs/2301.12503)  [![githubio](https://img.shields.io/badge/GitHub.io-Audio_Samples-blue?logo=Github&style=flat-square)](https://audioldm.github.io/)  [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/haoheliu/audioldm-text-to-audio-generation)  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/olaviinha/NeuralTextToAudio/blob/main/AudioLDM_pub.ipynb?force_theme=dark)  [![Replicate](https://replicate.com/jagilley/audio-ldm/badge)](https://replicate.com/jagilley/audio-ldm)
 
 <!-- # [![PyPI version](https://badge.fury.io/py/voicefixer.svg)](https://badge.fury.io/py/voicefixer) -->
 
-Generate speech, sound effects, music and beyond.
+**Generate speech, sound effects, music and beyond.**
+
+This repo currently suppport: 
+
+- Text-to-Audio Generation
+- Audio-to-Audio Generation
+- Text-guided Audio-to-Audio Style Transfer
 
 <hr>
 
@@ -16,9 +22,13 @@ Generate speech, sound effects, music and beyond.
 # Change Log
 
 **2023-02-24**: Add audio-to-audio generation. Add test cases.
+
 **2023-02-15**: Add audio style transfer. Add more options on generation.
 
 ## Web APP
+
+The web APP currently only support Text-to-Audio generation. For full functionality please refer to the [Commandline Usage](https://github.com/haoheliu/AudioLDM#commandline-usage).
+
 1. Prepare running environment
 ```shell
 conda create -n audioldm python=3.8; conda activate audioldm
@@ -32,7 +42,7 @@ python3 app.py
 3. A link will be printed out. Click the link to open the browser and play.
 
 ## Commandline Usage
-1. Prepare running environment
+Prepare running environment
 ```shell
 # Optional
 conda create -n audioldm python=3.8; conda activate audioldm
@@ -40,20 +50,20 @@ conda create -n audioldm python=3.8; conda activate audioldm
 pip3 install audioldm
 ```
 
-2. text-to-audio generation: generate an audio guided by a text
+:star2: **Text-to-Audio Generation**: generate an audio guided by a text
 ```shell
-# Test run
-audioldm -t "A hammer is hitting a wooden surface" # The default --mode is "generation"
+# The default --mode is "generation"
+audioldm -t "A hammer is hitting a wooden surface" 
 # Result will be saved in "./output/generation"
 ```
 
-3. audio-to-audio generation: generate an audio guided by an audio (output will have similar audio events as the input audio file).
+:star2: **Audio-to-Audio Generation**: generate an audio guided by an audio (output will have similar audio events as the input audio file).
 ```shell
 audioldm --file_path trumpet.wav
 # Result will be saved in "./output/generation_audio_to_audio/trumpet"
 ```
 
-4. audio-to-audio style transfer
+:star2: **Text-guided Audio-to-Audio Style Transfer**
 ```shell
 # Test run
 # --file_path is the original audio file for transfer
@@ -109,7 +119,6 @@ For the evaluation of audio generative model, please refer to [audioldm_eval](ht
 # Web Demo
 
 Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using [Gradio](https://github.com/gradio-app/gradio). Try out the Web Demo [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/haoheliu/audioldm-text-to-audio-generation)
-
 
 # TODO
 
