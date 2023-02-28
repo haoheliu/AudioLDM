@@ -160,13 +160,15 @@ def style_transfer(
     
     assert get_bit_depth(original_audio_file_path) == 16, "The bit depth of the original audio file %s must be 16" % original_audio_file_path
     
+    if(duration > 20):
+        print("Warning: The duration of the audio file %s must be less than 20 seconds. Longer duration will result in Nan in model output (we are still debugging that); Automatically set duration to 20 seconds")
+        duration = 20
+    
     if(duration >= audio_file_duration):
         print("Warning: Duration you specified %s-seconds must equal or smaller than the audio file duration %ss" % (duration, audio_file_duration))
         duration = round_up_duration(audio_file_duration)
         print("Set new duration as %s-seconds" % duration)
-        
-    assert duration <= 20, "Currently we only support 20-seconds maxmimum duration for style transfer; Longer duration will result in Nan in model output; Please change duration to a smaller value"
-    
+
     # duration = round_up_duration(duration)
     
     latent_diffusion = set_cond_text(latent_diffusion)
