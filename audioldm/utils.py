@@ -1,16 +1,25 @@
 import importlib
 
 from inspect import isfunction
-
 import os
 import soundfile as sf
 import time
+import wave
 
-
+def get_duration(fname):
+    with contextlib.closing(wave.open(fname, 'r')) as f:
+        frames = f.getnframes()
+        rate = f.getframerate()
+        return frames / float(rate)
+    
+def get_bit_depth(fname):
+    with contextlib.closing(wave.open(fname, 'r')) as f:
+        bit_depth = f.getsampwidth() * 8
+        return bit_depth
+       
 def get_time():
     t = time.localtime()
     return time.strftime("%d_%m_%Y_%H_%M_%S", t)
-
 
 def seed_everything(seed):
     import random, os

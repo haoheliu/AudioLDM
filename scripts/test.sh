@@ -1,5 +1,7 @@
 # Generation
 audioldm --file_path trumpet.wav
+audioldm --file_path trumpet.wav -dur 25
+audioldm --file_path trumpet.wav -dur 2.5
 audioldm --text "A hammer is hitting a wooden surface"
 audioldm
 
