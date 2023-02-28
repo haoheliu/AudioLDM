@@ -24,13 +24,12 @@ audioldm = build_model()
 #     response = [(response[i], response[i+1]) for i in range(0, len(response)-1, 2)]  # convert to tuples of list
 #     return response, history
 
-
 def text2audio(text, duration, guidance_scale, random_seed, n_candidates):
     # print(text, length, guidance_scale)
     waveform = text_to_audio(
-        audioldm,
-        text,
-        random_seed,
+        latent_diffusion=audioldm,
+        text=text,
+        seed=random_seed,
         duration=duration,
         guidance_scale=guidance_scale,
         n_candidate_gen_per_text=int(n_candidates),
