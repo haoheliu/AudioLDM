@@ -82,6 +82,25 @@ class AudioLDMPlugin(TuneflowPlugin):
                         "step": 2.5
                     }
                 }
+            },
+            "randomSeed": {
+                "displayName": {
+                    "en": "Random Seed",
+                    "zh": "随机因子"
+                },
+                "defaultValue": 42,
+                "description": {
+                    "en": "Using the same params and random seed generates the same response",
+                    "zh": "使用相同的参数值和随机因子可以生成相同的结果"
+                },
+                "widget": {
+                    "type": WidgetType.InputNumber.value,
+                    "config": {
+                        "minValue": 1,
+                        "maxValue": 99999999,
+                        "step": 1
+                    }
+                }
             }
         }
 
@@ -96,7 +115,7 @@ class AudioLDMPlugin(TuneflowPlugin):
             duration=params["duration"],
             guidance_scale=params["guidance_scale"],
             # Randomize seed.
-            random_seed=random.randint(0, 999999))
+            random_seed=params["randomSeed"])
         for file_bytes in file_bytes_list:
             try:
                 file_bytes.seek(0)
