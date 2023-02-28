@@ -42,6 +42,7 @@ REQUIRED = [
     "gradio",
     "pyyaml",
     "einops",
+    "contextlib",
     "numpy<=1.23.5",
     "soundfile",
     "librosa==0.9.2",

@@ -43,7 +43,6 @@ def pad_wav(waveform, segment_length):
         temp_wav[:, :waveform_length] = waveform
     return temp_wav
 
-
 def normalize_wav(waveform):
     waveform = waveform - np.mean(waveform)
     waveform = waveform / (np.max(np.abs(waveform)) + 1e-8)
@@ -66,6 +65,7 @@ def wav_to_fbank(filename, target_length=1024, fn_STFT=None):
 
     # mixup
     waveform = read_wav_file(filename, target_length * 160)  # hop size is 160
+
     waveform = waveform[0, ...]
     waveform = torch.FloatTensor(waveform)
 

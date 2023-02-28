@@ -4,3 +4,5 @@ build
 dist
 output
 *temp.py
+*.wav
+gradio_cached_examples

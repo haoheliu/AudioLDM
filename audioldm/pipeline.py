@@ -7,7 +7,7 @@ from torch import autocast
 from tqdm import tqdm, trange
 
 from audioldm import LatentDiffusion, seed_everything
-from audioldm.utils import default_audioldm_config
+from audioldm.utils import default_audioldm_config, get_duration, get_bit_depth
 from audioldm.audio import wav_to_fbank, TacotronSTFT, read_wav_file
 from audioldm.latent_diffusion.ddim import DDIMSampler
 from einops import repeat
@@ -49,6 +49,8 @@ def make_batch_for_text_to_audio(text, waveform=None, fbank=None, batchsize=1):
     )
     return batch
 
+def round_up_duration(duration):
+    return int(round(duration/2.5)) * 2.5
 
 def build_model(
     ckpt_path=os.path.join(CACHE_DIR, "audioldm-s-full.ckpt"),
@@ -109,7 +111,7 @@ def text_to_audio(
     config=None,
 ):
     seed_everything(int(seed))
-    
+    duration = round_up_duration(duration)
     waveform = None
     if(original_audio_file_path is not None):
         waveform = read_wav_file(original_audio_file_path, int(duration * 102.4) * 160)
@@ -152,6 +154,18 @@ def style_transfer(
     else:
         device = torch.device("cpu")
 
+    assert original_audio_file_path is not None, "You need to provide the original audio file path"
+    
+    audio_file_duration = get_duration(original_audio_file_path)
+    
+    assert get_bit_depth(original_audio_file_path) == 16, "The bit depth of the original audio file %s must be 16" % original_audio_file_path
+    
+    assert duration >= audio_file_duration, "Duration you specified %s must equal or smaller than the audio file duration %ss" % (duration, audio_file_duration)
+    
+    assert duration <= 20, "Currently we only support 20s maxmimum duration for style transfer"
+    
+    # duration = round_up_duration(duration)
+    
     latent_diffusion = set_cond_text(latent_diffusion)
 
     if config is not None:
@@ -161,7 +175,7 @@ def style_transfer(
         config = default_audioldm_config()
 
     seed_everything(int(seed))
-    latent_diffusion.latent_t_size = duration_to_latent_t_size(duration)
+    # latent_diffusion.latent_t_size = duration_to_latent_t_size(duration)
     latent_diffusion.cond_stage_model.embed_mode = "text"
 
     fn_STFT = TacotronSTFT(
@@ -213,7 +227,7 @@ def style_transfer(
                 )
 
                 x_samples = latent_diffusion.decode_first_stage(samples)
-
+                print(x_samples)
                 waveform = latent_diffusion.first_stage_model.decode_to_waveform(
                     x_samples
                 )
