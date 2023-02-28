@@ -111,7 +111,6 @@ def text_to_audio(
     config=None,
 ):
     seed_everything(int(seed))
-    duration = round_up_duration(duration)
     waveform = None
     if(original_audio_file_path is not None):
         waveform = read_wav_file(original_audio_file_path, int(duration * 102.4) * 160)
