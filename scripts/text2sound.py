@@ -92,7 +92,7 @@ audioldm = build_model(ckpt_path=args.ckpt_path)
 waveform = text_to_audio(
     audioldm,
     text,
-    random_seed,
+    seed=random_seed,
     duration=duration,
     guidance_scale=guidance_scale,
     n_candidate_gen_per_text=n_candidate_gen_per_text,
