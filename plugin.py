@@ -1,9 +1,8 @@
-from tuneflow_py import TuneflowPlugin, ParamDescriptor, Song, ReadAPIs, TrackType, WidgetType, LabelText
+from tuneflow_py import TuneflowPlugin, ParamDescriptor, Song, TrackType, WidgetType, LabelText
 from typing import Dict, Any
 from audioldm import text_to_audio, build_model
 from pathlib import Path
 import traceback
-import random
 from io import BytesIO
 import soundfile as sf
 from typing import List
@@ -26,7 +25,7 @@ class AudioLDMPlugin(TuneflowPlugin):
         }
 
     @staticmethod
-    def params(song: Song, read_apis: ReadAPIs) -> Dict[str, ParamDescriptor]:
+    def params(song: Song) -> Dict[str, ParamDescriptor]:
         return {
             "prompt": {
                 "displayName": {
@@ -105,7 +104,7 @@ class AudioLDMPlugin(TuneflowPlugin):
         }
 
     @staticmethod
-    def run(song: Song, params: Dict[str, Any], read_apis: ReadAPIs):
+    def run(song: Song, params: Dict[str, Any]):
         model_path = str(Path(__file__).parent.joinpath('ckpt/ldm_trimmed.ckpt').absolute())
         model = build_model(ckpt_path=model_path)
         # TODO: Support prompt i18n
