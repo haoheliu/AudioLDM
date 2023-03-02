@@ -695,7 +695,10 @@ class LatentDiffusion(DDPM):
                     unconditional_conditioning=unconditional_conditioning,
                     use_plms=use_plms,
                 )
-
+                
+                if(torch.max(torch.abs(samples)) > 1e2):
+                    samples = torch.clip(samples, min=-10, max=10)
+                    
                 mel = self.decode_first_stage(samples)
 
                 waveform = self.mel_spectrogram_to_waveform(mel)
