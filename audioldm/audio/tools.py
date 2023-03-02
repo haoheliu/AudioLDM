@@ -57,6 +57,10 @@ def read_wav_file(filename, segment_length):
     waveform = normalize_wav(waveform)
     waveform = waveform[None, ...]
     waveform = pad_wav(waveform, segment_length)
+    
+    waveform = waveform / np.max(np.abs(waveform))
+    waveform = 0.5 * waveform
+    
     return waveform
 
 
