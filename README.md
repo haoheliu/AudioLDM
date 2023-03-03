@@ -120,6 +120,10 @@ For the evaluation of audio generative model, please refer to [audioldm_eval](ht
 
 Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using [Gradio](https://github.com/gradio-app/gradio). Try out the Web Demo [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/haoheliu/audioldm-text-to-audio-generation)
 
+# TuneFlow Demo
+
+Try out AudioLDM as a [TuneFlow](https://tuneflow.com) plugin [![TuneFlow x AudioLDM](https://img.shields.io/badge/TuneFlow-AudioLDM-%23C563E6%20)](https://github.com/tuneflow/AudioLDM). See how it can work in a real DAW (Digital Audio Workstation). 
+
 # TODO
 
 - [ ] Update the checkpoint with more training steps.
