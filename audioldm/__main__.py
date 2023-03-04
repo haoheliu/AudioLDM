@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import os
-from audioldm import text_to_audio, style_transfer, build_model, save_wave, get_time
+from audioldm import text_to_audio, style_transfer, build_model, save_wave, get_time, round_up_duration, get_duration
 import argparse
 
 CACHE_DIR = os.getenv(
@@ -54,15 +54,21 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--model_name",
+    type=str,
+    required=False,
+    help="The checkpoint you gonna use",
+    default="audioldm-s-full",
+    choices=["audioldm-s-full", "audioldm-l-full", "audioldm-s-full-v2"]
+)
+
+parser.add_argument(
     "-ckpt",
     "--ckpt_path",
     type=str,
     required=False,
     help="The path to the pretrained .ckpt model",
-    default=os.path.join(
-                CACHE_DIR,
-                "audioldm-s-full.ckpt",
-            ),
+    default=None,
 )
 
 parser.add_argument(
@@ -118,6 +124,10 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+if(args.ckpt_path is not None):
+    print("Warning: ckpt_path has no effect after version 0.0.20.")
+    
 assert args.duration % 2.5 == 0, "Duration must be a multiple of 2.5"
 
 mode = args.mode
@@ -139,7 +149,7 @@ guidance_scale = args.guidance_scale
 n_candidate_gen_per_text = args.n_candidate_gen_per_text
 
 os.makedirs(save_path, exist_ok=True)
-audioldm = build_model(ckpt_path=args.ckpt_path)
+audioldm = build_model(model_name=args.model_name)
 
 if(args.mode == "generation"):
     waveform = text_to_audio(

@@ -7,14 +7,11 @@ from torch import autocast
 from tqdm import tqdm, trange
 
 from audioldm import LatentDiffusion, seed_everything
-from audioldm.utils import default_audioldm_config, get_duration, get_bit_depth
+from audioldm.utils import default_audioldm_config, get_duration, get_bit_depth, get_metadata, download_checkpoint
 from audioldm.audio import wav_to_fbank, TacotronSTFT, read_wav_file
 from audioldm.latent_diffusion.ddim import DDIMSampler
 from einops import repeat
-
-CACHE_DIR = os.getenv(
-    "AUDIOLDM_CACHE_DIR",
-    os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
+import os
 
 def make_batch_for_text_to_audio(text, waveform=None, fbank=None, batchsize=1):
     text = [text] * batchsize
@@ -53,9 +50,18 @@ def round_up_duration(duration):
     return int(round(duration/2.5) + 1) * 2.5
 
 def build_model(
-    ckpt_path=os.path.join(CACHE_DIR, "audioldm-s-full.ckpt"),
+    ckpt_path=None,
     config=None,
+    model_name="audioldm-s-full"
 ):
+    print("Load AudioLDM: %s", model_name)
+    
+    if(ckpt_path is None):
+        ckpt_path = get_metadata()[model_name]["path"]
+    
+    if(not os.path.exists(ckpt_path)):
+        download_checkpoint(model_name)
+
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
     else:
@@ -65,7 +71,7 @@ def build_model(
         assert type(config) is str
         config = yaml.load(open(config, "r"), Loader=yaml.FullLoader)
     else:
-        config = default_audioldm_config()
+        config = default_audioldm_config(model_name)
 
     # Use text as condition instead of using waveform during training
     config["model"]["params"]["device"] = device
