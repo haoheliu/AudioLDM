@@ -6,7 +6,7 @@
 
 **Generate speech, sound effects, music and beyond.**
 
-This repo currently suppport: 
+This repo currently support: 
 
 - **Text-to-Audio Generation**: Generate audio given text input.
 - **Audio-to-Audio Generation**: Given an audio, generate another audio that contain the same type of sound. 
@@ -124,8 +124,6 @@ optional arguments:
   --seed SEED           Change this value (any integer number) will lead to a different generation result. DEFAULT 42
 ```
 
-
-
 For the evaluation of audio generative model, please refer to [audioldm_eval](https://github.com/haoheliu/audioldm_eval).
 
 # Web Demo
@@ -138,11 +136,15 @@ Try out AudioLDM as a [TuneFlow](https://tuneflow.com) plugin [![TuneFlow x Audi
 
 # TODO
 
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/haoheliuP)
+
 - [x] Update the checkpoint with more training steps.
 - [x] Update the checkpoint with more parameters (audioldm-l).
 - [ ] Add AudioCaps finetuned AudioLDM-S model
 - [x] Build pip installable package for commandline use
 - [x] Build Gradio web application
+- [ ] Add super-resolution, inpainting into Gradio web application
+- [ ] Add style-transfer into Gradio web application
 - [x] Add text-guided style transfer
 - [x] Add audio-to-audio generation
 - [x] Add audio super-resolution
