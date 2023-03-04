@@ -7,6 +7,13 @@ import soundfile as sf
 import time
 import wave
 
+import urllib.request
+import progressbar
+
+CACHE_DIR = os.getenv(
+    "AUDIOLDM_CACHE_DIR",
+    os.path.join(os.path.expanduser("~"), ".cache/audioldm"))
+
 def get_duration(fname):
     with contextlib.closing(wave.open(fname, 'r')) as f:
         frames = f.getnframes()
@@ -90,8 +97,8 @@ def instantiate_from_config(config):
     return get_obj_from_str(config["target"])(**config.get("params", dict()))
 
 
-def default_audioldm_config():
-    return {
+def default_audioldm_config(model_name="audioldm-s-full"):    
+    basic_config = {
         "wave_file_save_path": "./output",
         "id": {
             "version": "v1",
@@ -184,3 +191,67 @@ def default_audioldm_config():
             },
         },
     }
+    
+    if("-l-" in model_name):
+        basic_config["model"]["params"]["unet_config"]["params"]["model_channels"] = 256
+        basic_config["model"]["params"]["unet_config"]["params"]["num_head_channels"] = 64
+    
+    return basic_config
+        
+def get_metadata():
+    return {
+        "audioldm-s-full": {
+            "path": os.path.join(
+                CACHE_DIR,
+                "audioldm-s-full.ckpt",
+            ),
+            "url": "https://zenodo.org/record/7600541/files/audioldm-s-full?download=1",
+        },
+        "audioldm-l-full": {
+            "path": os.path.join(
+                CACHE_DIR,
+                "audioldm-l-full.ckpt",
+            ),
+            "url": "https://zenodo.org/record/7698295/files/audioldm-full-l.ckpt?download=1",
+        },
+        "audioldm-s-full-v2": {
+            "path": os.path.join(
+                CACHE_DIR,
+                "audioldm-s-full-v2.ckpt",
+            ),
+            "url": "https://zenodo.org/record/7698295/files/audioldm-full-s-v2.ckpt?download=1",
+        },
+    }
+    
+class MyProgressBar():
+    def __init__(self):
+        self.pbar = None
+
+    def __call__(self, block_num, block_size, total_size):
+        if not self.pbar:
+            self.pbar=progressbar.ProgressBar(maxval=total_size)
+            self.pbar.start()
+
+        downloaded = block_num * block_size
+        if downloaded < total_size:
+            self.pbar.update(downloaded)
+        else:
+            self.pbar.finish()
+            
+def download_checkpoint(checkpoint_name="audioldm-s-full"):
+    meta = get_metadata()
+    if(checkpoint_name not in meta.keys()):
+        print("The model name you provided is not supported. Please use one of the following: ", meta.keys())
+
+    if not os.path.exists(meta[checkpoint_name]["path"]) or os.path.getsize(meta[checkpoint_name]["path"]) < 2*10**9:
+        os.makedirs(os.path.dirname(meta[checkpoint_name]["path"]), exist_ok=True)
+        print(f"Downloading the main structure of {checkpoint_name} into {os.path.dirname(meta[checkpoint_name]['path'])}")
+
+        urllib.request.urlretrieve(meta[checkpoint_name]["url"], meta[checkpoint_name]["path"], MyProgressBar())
+        print(
+            "Weights downloaded in: {} Size: {}".format(
+                meta[checkpoint_name]["path"],
+                os.path.getsize(meta[checkpoint_name]["path"]),
+            )
+        )
+    

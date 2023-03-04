@@ -21,6 +21,8 @@ This repo currently suppport:
 
 # Change Log
 
+**2023-03-04**: Add two more checkpoints, one is small model with more training steps, another is a large model. Add model selection in the Gradio APP.
+
 **2023-02-24**: Add audio-to-audio generation. Add test cases. Add a pipeline (python function) for audio super-resolution and inpainting.
 
 **2023-02-15**: Add audio style transfer. Add more options on generation.
@@ -77,38 +79,48 @@ audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing"
 audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" --transfer_strength 0.25
 ```
 
-For more options on guidance scale, batchsize, seed, ddim steps, etc., please run
+:gear: How to choose between different model checkpoints?
+```
+# Add the --model_name parameter, choice={audioldm-s-full,audioldm-l-full,audioldm-s-full-v2}
+audioldm --model_name audioldm-s-full
+```
+- audioldm-s-full: the original open-sourced version.
+- audioldm-s-full-v2: more training steps comparing with audioldm-s-full.
+- audioldm-l-full: larger model comparing with audioldm-s-full.
+
+:grey_question: For more options on guidance scale, batchsize, seed, ddim steps, etc., please run
 ```shell
 audioldm -h
 ```
 ```console
-usage: audioldm [-h] [--mode {generation,transfer}] [-t TEXT] [-f FILE_PATH] [--transfer_strength TRANSFER_STRENGTH] [-s SAVE_PATH] [-ckpt CKPT_PATH] [-b BATCHSIZE] [--ddim_steps DDIM_STEPS] [-gs GUIDANCE_SCALE]
-                [-dur DURATION] [-n N_CANDIDATE_GEN_PER_TEXT] [--seed SEED]
+usage: audioldm [-h] [--mode {generation,transfer}] [-t TEXT] [-f FILE_PATH] [--transfer_strength TRANSFER_STRENGTH] [-s SAVE_PATH] [--model_name {audioldm-s-full,audioldm-l-full,audioldm-s-full-v2}] [-ckpt CKPT_PATH]
+                [-b BATCHSIZE] [--ddim_steps DDIM_STEPS] [-gs GUIDANCE_SCALE] [-dur DURATION] [-n N_CANDIDATE_GEN_PER_TEXT] [--seed SEED]
 
 optional arguments:
   -h, --help            show this help message and exit
   --mode {generation,transfer}
-                        generation: text-to-audio generation; transfer: style transfer. DEFAULT "generation"
-  -t TEXT, --text TEXT  Text prompt to the model for audio generation. DEFAULT ""
+                        generation: text-to-audio generation; transfer: style transfer
+  -t TEXT, --text TEXT  Text prompt to the model for audio generation, DEFAULT ""
   -f FILE_PATH, --file_path FILE_PATH
-                        (--mode transfer): Original audio file for style transfer; Or (--mode generation): the guidance audio file for generating simialr audio. DEFAULT None
+                        (--mode transfer): Original audio file for style transfer; Or (--mode generation): the guidance audio file for generating simialr audio, DEFAULT None
   --transfer_strength TRANSFER_STRENGTH
-                        A value between 0 and 1. 0 means original audio without transfer, 1 means completely transfer to the audio indicated by text. DEFAULT 0.5
+                        A value between 0 and 1. 0 means original audio without transfer, 1 means completely transfer to the audio indicated by text, DEFAULT 0.5
   -s SAVE_PATH, --save_path SAVE_PATH
-                        The path to save model output. DEFAULT "./output"
+                        The path to save model output, DEFAULT "./output"
+  --model_name {audioldm-s-full,audioldm-l-full,audioldm-s-full-v2}
+                        The checkpoint you gonna use, DEFAULT "audioldm-s-full"
   -ckpt CKPT_PATH, --ckpt_path CKPT_PATH
-                        The path to the pretrained .ckpt model. DEFAULT "~/.cache/audioldm/audioldm-s-full.ckpt"
+                        (deprecated) The path to the pretrained .ckpt model, DEFAULT None
   -b BATCHSIZE, --batchsize BATCHSIZE
-                        Generate how many samples at the same time. DEFAULT 1
+                        Generate how many samples at the same time, DEFAULT 1
   --ddim_steps DDIM_STEPS
-                        The sampling step for DDIM. DEFAULT 200
+                        The sampling step for DDIM, DEFAULT 200
   -gs GUIDANCE_SCALE, --guidance_scale GUIDANCE_SCALE
-                        Guidance scale (Large => better relavancy to text; Small => better diversity). DEFAULT 2.5
+                        Guidance scale (Large => better quality and relavancy to text; Small => better diversity), DEFAULT 2.5
   -dur DURATION, --duration DURATION
-                        The duration of the samples. DEFAULT 10
+                        The duration of the samples, DEFAULT 10
   -n N_CANDIDATE_GEN_PER_TEXT, --n_candidate_gen_per_text N_CANDIDATE_GEN_PER_TEXT
-                        Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier
-                        computation. DEFAULT 3
+                        Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier computation, DEFAULT 3
   --seed SEED           Change this value (any integer number) will lead to a different generation result. DEFAULT 42
 ```
 
@@ -126,7 +138,8 @@ Try out AudioLDM as a [TuneFlow](https://tuneflow.com) plugin [![TuneFlow x Audi
 
 # TODO
 
-- [ ] Update the checkpoint with more training steps.
+- [x] Update the checkpoint with more training steps.
+- [x] Update the checkpoint with more parameters (audioldm-l).
 - [ ] Add AudioCaps finetuned AudioLDM-S model
 - [x] Build pip installable package for commandline use
 - [x] Build Gradio web application

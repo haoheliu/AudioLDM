@@ -6,7 +6,8 @@ from audioldm import text_to_audio, build_model
 
 model_id = "haoheliu/AudioLDM-S-Full"
 
-audioldm = build_model()
+audioldm = None
+
 # audioldm=None
 
 # def predict(input, history=[]):
@@ -24,7 +25,9 @@ audioldm = build_model()
 #     response = [(response[i], response[i+1]) for i in range(0, len(response)-1, 2)]  # convert to tuples of list
 #     return response, history
 
-def text2audio(text, duration, guidance_scale, random_seed, n_candidates):
+def text2audio(text, duration, guidance_scale, random_seed, n_candidates, model_name):
+    global audioldm
+    audioldm=build_model(model_name=model_name)
     # print(text, length, guidance_scale)
     waveform = text_to_audio(
         latent_diffusion=audioldm,
@@ -246,6 +249,9 @@ with iface:
                     step=1,
                     label="Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier computation",
                 )
+                model_name = gr.Dropdown(
+                    ["audioldm-s-full", "audioldm-l-full", "audioldm-s-full-v2"], value="audioldm-s-full", label="Choose the model to use. -l- means large model, -s- means small model."
+                )
             ############# Output
             # outputs=gr.Audio(label="Output", type="numpy")
             outputs = gr.Video(label="Output", elem_id="output-video")
@@ -266,7 +272,7 @@ with iface:
 
         btn.click(
             text2audio,
-            inputs=[textbox, duration, guidance_scale, seed, n_candidates],
+            inputs=[textbox, duration, guidance_scale, seed, n_candidates, model_name],
             outputs=[outputs],
         )
 
@@ -282,31 +288,33 @@ with iface:
         </div>
         """
         )
-        gr.Examples(
-            [
-                ["A hammer is hitting a wooden surface", 5, 2.5, 45, 3],
-                [
-                    "Peaceful and calming ambient music with singing bowl and other instruments.",
-                    5,
-                    2.5,
-                    45,
-                    3,
-                ],
-                ["A man is speaking in a small room.", 5, 2.5, 45, 3],
-                ["A female is speaking followed by footstep sound", 5, 2.5, 45, 3],
-                [
-                    "Wooden table tapping sound followed by water pouring sound.",
-                    5,
-                    2.5,
-                    45,
-                    3,
-                ],
-            ],
-            fn=text2audio,
-            inputs=[textbox, duration, guidance_scale, seed, n_candidates],
-            outputs=[outputs],
-            cache_examples=True,
-        )
+        # gr.Examples(
+        #     [
+        #         ["A hammer is hitting a wooden surface", 5, 2.5, 45, 3, "audioldm-s-full"],
+        #         [
+        #             "Peaceful and calming ambient music with singing bowl and other instruments.",
+        #             5,
+        #             2.5,
+        #             45,
+        #             3,
+        #             "audioldm-s-full"
+        #         ],
+        #         ["A man is speaking in a small room.", 5, 2.5, 45, 3, "audioldm-s-full"],
+        #         ["A female is speaking followed by footstep sound", 5, 2.5, 45, 3, "audioldm-s-full"],
+        #         [
+        #             "Wooden table tapping sound followed by water pouring sound.",
+        #             5,
+        #             2.5,
+        #             45,
+        #             3,
+        #             "audioldm-s-full"
+        #         ],
+        #     ],
+        #     fn=text2audio,
+        #     inputs=[textbox, duration, guidance_scale, seed, n_candidates, model_name],
+        #     outputs=[outputs],
+        #     cache_examples=True,
+        # )
         with gr.Accordion("Additional information", open=False):
             gr.HTML(
                 """
