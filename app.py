@@ -27,7 +27,8 @@ audioldm = None
 
 def text2audio(text, duration, guidance_scale, random_seed, n_candidates, model_name):
     global audioldm
-    audioldm=build_model(model_name=model_name)
+    if audioldm is None:
+        audioldm=build_model(model_name=model_name)
     # print(text, length, guidance_scale)
     waveform = text_to_audio(
         latent_diffusion=audioldm,
