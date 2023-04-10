@@ -229,21 +229,21 @@ def get_metadata():
                 CACHE_DIR,
                 "audioldm-m-text-ft.ckpt",
             ),
-            "url": "",
+            "url": "https://zenodo.org/record/7813012/files/audioldm-m-text-ft.ckpt?download=1",
         },
         "audioldm-s-text-ft": {
             "path": os.path.join(
                 CACHE_DIR,
                 "audioldm-s-text-ft.ckpt",
             ),
-            "url": "",
+            "url": "https://zenodo.org/record/7813012/files/audioldm-s-text-ft.ckpt?download=1",
         },
         "audioldm-m-full": {
             "path": os.path.join(
                 CACHE_DIR,
                 "audioldm-m-full.ckpt",
             ),
-            "url": "",
+            "url": "https://zenodo.org/record/7813012/files/audioldm-m-full.ckpt?download=1",
         },
     }
     

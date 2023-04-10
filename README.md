@@ -21,6 +21,8 @@ This repo currently support:
 
 # Change Log
 
+**2023-04-10**: Try to finetune AudioLDM with MusicCaps and AudioCaps datasets. Add three more checkpoints, including audioldm-m-text-ft, audioldm-s-text-ft, and audioldm-m-full.
+
 **2023-03-04**: Add two more checkpoints, one is small model with more training steps, another is a large model. Add model selection in the Gradio APP.
 
 **2023-02-24**: Add audio-to-audio generation. Add test cases. Add a pipeline (python function) for audio super-resolution and inpainting.
@@ -84,12 +86,12 @@ audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" --trans
 # Add the --model_name parameter, choice={audioldm-m-text-ft, audioldm-s-text-ft, audioldm-m-full, audioldm-s-full,audioldm-l-full,audioldm-s-full-v2}
 audioldm --model_name audioldm-s-full
 ```
-- :star: audioldm-m-text-ft (**recommand**, default): the medium large AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs.
-- :star: audioldm-s-text-ft (**recommand**): the small AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs.
-- audioldm-s-full: the original open-sourced version (small AudioLDM).
-- audioldm-m-full: the medium AudioLDM without finetuning (trained with audio embeddings as condition).
-- audioldm-s-full-v2: more training steps comparing with audioldm-s-full.
-- audioldm-l-full: larger model comparing with audioldm-s-full.
+- :star: audioldm-m-text-ft (**recommand**, default): the medium large AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs *(added 2023-04-10)*.
+- :star: audioldm-s-text-ft (**recommand**): the small AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs *(added 2023-04-10)*.
+- audioldm-m-full: the medium AudioLDM without finetuning and trained with audio embeddings as condition *(added 2023-04-10)*.
+- audioldm-s-full-v2: more training steps comparing with audioldm-s-full *(added 2023-03-04)*.
+- audioldm-l-full: larger model comparing with audioldm-s-full *(added 2023-03-04)*.
+- audioldm-s-full: the original open-sourced version *(added 2023-02-01)*.
 
 :grey_question: For more options on guidance scale, batchsize, seed, ddim steps, etc., please run
 ```shell
