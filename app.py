@@ -7,7 +7,7 @@ from audioldm import text_to_audio, build_model
 model_id = "haoheliu/AudioLDM-S-Full"
 
 audioldm = None
-
+current_model_name = None
 # audioldm=None
 
 # def predict(input, history=[]):
@@ -26,9 +26,12 @@ audioldm = None
 #     return response, history
 
 def text2audio(text, duration, guidance_scale, random_seed, n_candidates, model_name):
-    global audioldm
-    if audioldm is None:
+    global audioldm, current_model_name
+    
+    if audioldm is None or model_name != current_model_name:
         audioldm=build_model(model_name=model_name)
+        current_model_name = model_name
+        
     # print(text, length, guidance_scale)
     waveform = text_to_audio(
         latent_diffusion=audioldm,
@@ -251,7 +254,7 @@ with iface:
                     label="Automatic quality control. This number control the number of candidates (e.g., generate three audios and choose the best to show you). A Larger value usually lead to better quality with heavier computation",
                 )
                 model_name = gr.Dropdown(
-                    ["audioldm-s-full", "audioldm-l-full", "audioldm-s-full-v2"], value="audioldm-s-full", label="Choose the model to use. -l- means large model, -s- means small model."
+                    ["audioldm-s-full", "audioldm-l-full", "audioldm-s-full-v2","audioldm-m-text-ft", "audioldm-s-text-ft", "audioldm-m-full"], value="audioldm-m-text-ft", label="Choose the model to use. audioldm-m-text-ft and audioldm-s-text-ft are recommanded. -s- means small, -m- means medium and -l- means large",
                 )
             ############# Output
             # outputs=gr.Audio(label="Output", type="numpy")

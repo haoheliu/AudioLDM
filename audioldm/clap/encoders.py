@@ -14,6 +14,7 @@ class CLAPAudioEmbeddingClassifierFreev2(nn.Module):
         key="class",
         sampling_rate=16000,
         embed_mode="audio",
+        amodel = "HTSAT-tiny",
         unconditional_prob=0.1,
         random_mute=False,
         max_random_mute_portion=0.5,
@@ -24,7 +25,7 @@ class CLAPAudioEmbeddingClassifierFreev2(nn.Module):
         self.key = key
         self.device = "cpu"
         self.precision = "fp32"
-        self.amodel = "HTSAT-tiny"  # or 'PANN-14'
+        self.amodel = amodel  # or 'PANN-14'
         self.tmodel = "roberta"  # the best text encoder in our training
         self.enable_fusion = False  # False if you do not want to use the fusion model
         self.fusion_type = "aff_2d"
