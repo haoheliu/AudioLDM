@@ -195,7 +195,10 @@ def default_audioldm_config(model_name="audioldm-s-full"):
     if("-l-" in model_name):
         basic_config["model"]["params"]["unet_config"]["params"]["model_channels"] = 256
         basic_config["model"]["params"]["unet_config"]["params"]["num_head_channels"] = 64
-    
+    elif("-m-" in model_name):
+        basic_config["model"]["params"]["unet_config"]["params"]["model_channels"] = 192
+        basic_config["model"]["params"]["cond_stage_config"]["params"]["amodel"] = "HTSAT-base" # This model use a larger HTAST
+        
     return basic_config
         
 def get_metadata():
@@ -220,6 +223,27 @@ def get_metadata():
                 "audioldm-s-full-v2.ckpt",
             ),
             "url": "https://zenodo.org/record/7698295/files/audioldm-full-s-v2.ckpt?download=1",
+        },
+        "audioldm-m-text-ft": {
+            "path": os.path.join(
+                CACHE_DIR,
+                "audioldm-m-text-ft.ckpt",
+            ),
+            "url": "",
+        },
+        "audioldm-s-text-ft": {
+            "path": os.path.join(
+                CACHE_DIR,
+                "audioldm-s-text-ft.ckpt",
+            ),
+            "url": "",
+        },
+        "audioldm-m-full": {
+            "path": os.path.join(
+                CACHE_DIR,
+                "audioldm-m-full.ckpt",
+            ),
+            "url": "",
         },
     }
     

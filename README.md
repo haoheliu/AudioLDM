@@ -81,10 +81,13 @@ audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" --trans
 
 :gear: How to choose between different model checkpoints?
 ```
-# Add the --model_name parameter, choice={audioldm-s-full,audioldm-l-full,audioldm-s-full-v2}
+# Add the --model_name parameter, choice={audioldm-m-text-ft, audioldm-s-text-ft, audioldm-m-full, audioldm-s-full,audioldm-l-full,audioldm-s-full-v2}
 audioldm --model_name audioldm-s-full
 ```
-- audioldm-s-full: the original open-sourced version.
+- :star: audioldm-m-text-ft (**recommand**, default): the medium large AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs.
+- :star: audioldm-s-text-ft (**recommand**): the small AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs.
+- audioldm-s-full: the original open-sourced version (small AudioLDM).
+- audioldm-m-full: the medium AudioLDM without finetuning (trained with audio embeddings as condition).
 - audioldm-s-full-v2: more training steps comparing with audioldm-s-full.
 - audioldm-l-full: larger model comparing with audioldm-s-full.
 
