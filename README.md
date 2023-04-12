@@ -87,12 +87,14 @@ audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" --trans
 audioldm --model_name audioldm-s-full
 ```
 
-- :star: audioldm-m-full (default): the medium AudioLDM without finetuning and trained with audio embeddings as condition *(added 2023-04-10)*.
-- :star: audioldm-s-full: the original open-sourced version *(added 2023-02-01)*.
-- :star: audioldm-s-full-v2: more training steps comparing with audioldm-s-full *(added 2023-03-04)*.
+- :star: audioldm-m-full (default, **recommend**): the medium AudioLDM without finetuning and trained with audio embeddings as condition *(added 2023-04-10)*.
+- :star: audioldm-s-full (**recommend**): the original open-sourced version *(added 2023-02-01)*.
+- :star: audioldm-s-full-v2 (**recommend**): more training steps comparing with audioldm-s-full *(added 2023-03-04)*.
 - audioldm-s-text-ft: the small AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs *(added 2023-04-10)*.
 - audioldm-m-text-ft: the medium large AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs *(added 2023-04-10)*.
 - audioldm-l-full: larger model comparing with audioldm-s-full *(added 2023-03-04)*.
+
+> @haoheliu personally did a evaluation regarding the overall quality of the checkpoint, which gives audioldm-m-full (6.85/10), audioldm-s-full (6.62/10), audioldm-s-text-ft (6/10), audioldm-m-text-ft (5.46/10). These score are only for reference and may not reflect the true performance of the checkpoint. Checkpoint performance also varying with different text input as well.
 
 :grey_question: For more options on guidance scale, batchsize, seed, ddim steps, etc., please run
 ```shell
