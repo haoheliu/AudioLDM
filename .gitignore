@@ -6,3 +6,6 @@ output
 *temp.py
 *.wav
 gradio_cached_examples
+run.sh
+run2.sh
+output/

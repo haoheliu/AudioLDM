@@ -58,7 +58,7 @@ parser.add_argument(
     type=str,
     required=False,
     help="The checkpoint you gonna use",
-    default="audioldm-m-text-ft",
+    default="audioldm-m-full",
     choices=["audioldm-s-full", "audioldm-l-full", "audioldm-s-full-v2","audioldm-m-text-ft", "audioldm-s-text-ft", "audioldm-m-full"]
 )
 

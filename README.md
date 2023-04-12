@@ -86,12 +86,13 @@ audioldm --mode "transfer" --file_path trumpet.wav -t "Children Singing" --trans
 # Add the --model_name parameter, choice={audioldm-m-text-ft, audioldm-s-text-ft, audioldm-m-full, audioldm-s-full,audioldm-l-full,audioldm-s-full-v2}
 audioldm --model_name audioldm-s-full
 ```
-- :star: audioldm-m-text-ft (default): the medium large AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs *(added 2023-04-10)*.
-- :star: audioldm-m-full: the medium AudioLDM without finetuning and trained with audio embeddings as condition *(added 2023-04-10)*.
+
+- :star: audioldm-m-full (default): the medium AudioLDM without finetuning and trained with audio embeddings as condition *(added 2023-04-10)*.
+- :star: audioldm-s-full: the original open-sourced version *(added 2023-02-01)*.
+- :star: audioldm-s-full-v2: more training steps comparing with audioldm-s-full *(added 2023-03-04)*.
 - audioldm-s-text-ft: the small AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs *(added 2023-04-10)*.
-- audioldm-s-full-v2: more training steps comparing with audioldm-s-full *(added 2023-03-04)*.
+- audioldm-m-text-ft: the medium large AudioLDM finetuned with AudioCaps and MusicCaps audio-text pairs *(added 2023-04-10)*.
 - audioldm-l-full: larger model comparing with audioldm-s-full *(added 2023-03-04)*.
-- audioldm-s-full: the original open-sourced version *(added 2023-02-01)*.
 
 :grey_question: For more options on guidance scale, batchsize, seed, ddim steps, etc., please run
 ```shell
