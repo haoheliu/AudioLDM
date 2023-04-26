@@ -134,6 +134,28 @@ optional arguments:
 
 For the evaluation of audio generative model, please refer to [audioldm_eval](https://github.com/haoheliu/audioldm_eval).
 
+# Hugging Face 🧨 Diffusers
+
+AudioLDM is available in the Hugging Face [🧨 Diffusers]((https://github.com/huggingface/diffusers) library from v0.15.0 onwards. The official checkpoints can be found on the [Hugging Face Hub](https://huggingface.co/cvssp), alongside [documentation](https://huggingface.co/docs/diffusers/main/en/api/pipelines/audioldm) and [examples scripts](https://huggingface.co/docs/diffusers/main/en/api/pipelines/audioldm).
+
+To install Diffusers and Transformers, run:
+```bash
+pip install --upgrade diffusers transformers
+```
+
+You can then load pre-trained weights into the [AudioLDM pipeline](https://huggingface.co/docs/diffusers/main/en/api/pipelines/audioldm) and generate text-conditional audio outputs:
+```python
+from diffusers import AudioLDMPipeline
+import torch
+
+repo_id = "cvssp/audioldm-s-full-v2"
+pipe = AudioLDMPipeline.from_pretrained(repo_id, torch_dtype=torch.float16)
+pipe = pipe.to("cuda")
+
+prompt = "Techno music with a strong, upbeat tempo and high melodic riffs"
+audio = pipe(prompt, num_inference_steps=10, audio_length_in_s=5.0).audios[0]
+```
+
 # Web Demo
 
 Integrated into [Hugging Face Spaces 🤗](https://huggingface.co/spaces) using [Gradio](https://github.com/gradio-app/gradio). Try out the Web Demo [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/haoheliu/audioldm-text-to-audio-generation)
