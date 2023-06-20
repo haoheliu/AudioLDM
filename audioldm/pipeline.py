@@ -169,7 +169,7 @@ def style_transfer(
     #     print("Warning: The duration of the audio file %s must be less than 20 seconds. Longer duration will result in Nan in model output (we are still debugging that); Automatically set duration to 20 seconds")
     #     duration = 20
     
-    if(duration >= audio_file_duration):
+    if(duration > audio_file_duration):
         print("Warning: Duration you specified %s-seconds must equal or smaller than the audio file duration %ss" % (duration, audio_file_duration))
         duration = round_up_duration(audio_file_duration)
         print("Set new duration as %s-seconds" % duration)
