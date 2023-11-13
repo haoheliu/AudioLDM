@@ -185,9 +185,9 @@ Try out AudioLDM as a [TuneFlow](https://tuneflow.com) plugin [![TuneFlow x Audi
 If you found this tool useful, please consider citing
 ```bibtex
 @article{liu2023audioldm,
-  title={AudioLDM: Text-to-Audio Generation with Latent Diffusion Models},
+  title={{AudioLDM}: Text-to-Audio Generation with Latent Diffusion Models},
   author={Liu, Haohe and Chen, Zehua and Yuan, Yi and Mei, Xinhao and Liu, Xubo and Mandic, Danilo and Wang, Wenwu and Plumbley, Mark D},
-  journal={arXiv preprint arXiv:2301.12503},
+  journal={Proceedings of the International Conference on Machine Learning},
   year={2023}
 }
 ```
