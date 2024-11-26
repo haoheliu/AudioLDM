@@ -49,7 +49,7 @@ REQUIRED = [
     "scipy",
     "pandas",
     "torchlibrosa==0.0.9",
-    "transformers",
+    "transformers==4.29.0",
     "progressbar",
     "ftfy",
 ]
