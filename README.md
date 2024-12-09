@@ -36,7 +36,7 @@ The web APP currently only support Text-to-Audio generation. For full functional
 1. Prepare running environment
 ```shell
 conda create -n audioldm python=3.8; conda activate audioldm
-pip3 install audioldm
+pip3 install git+https://github.com/haoheliu/AudioLDM.git
 git clone https://github.com/haoheliu/AudioLDM; cd AudioLDM
 ```
 2. Start the web application (powered by Gradio)
@@ -51,7 +51,7 @@ Prepare running environment
 # Optional
 conda create -n audioldm python=3.8; conda activate audioldm
 # Install AudioLDM
-pip3 install audioldm
+pip3 install git+https://github.com/haoheliu/AudioLDM.git
 ```
 
 :star2: **Text-to-Audio Generation**: generate an audio guided by a text
