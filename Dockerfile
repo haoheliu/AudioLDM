@@ -29,7 +29,7 @@ RUN pip3 install --no-cache-dir torch==1.13.1+cu116 torchvision==0.14.1+cu116 to
 # Install all AudioLDM dependencies as per the module's requirements
 RUN pip3 install --no-cache-dir \
     tqdm \
-    gradio \
+    gradio==3.22.1 \
     pyyaml \
     einops \
     chardet \
