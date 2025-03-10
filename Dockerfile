@@ -23,17 +23,32 @@ RUN ln -sf /usr/bin/python3.8 /usr/bin/python && \
 # Set working directory
 WORKDIR /app
 
-# Install PyTorch with CUDA support
-RUN pip3 install --no-cache-dir torch==1.12.1+cu116 torchvision==0.13.1+cu116 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu116
+# Install PyTorch with CUDA support (specific version required by AudioLDM)
+RUN pip3 install --no-cache-dir torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
 
-# Install AudioLDM separately to avoid conflicts with specific PyTorch version
-RUN pip3 install --no-cache-dir numpy==1.23.5 \
-    && pip3 install --no-cache-dir SoundFile \
-    && pip3 install --no-cache-dir --no-deps git+https://github.com/haoheliu/AudioLDM.git \
-    && pip3 install --no-cache-dir transformers==4.30.2 diffusers==0.19.3 \
-    && pip3 install --no-cache-dir gradio==3.34.0 \
-    && pip3 install --no-cache-dir librosa \
-    && find /usr/local/lib/python3.8/dist-packages -name "*.pyc" -delete \
+# Install all AudioLDM dependencies as per the module's requirements
+RUN pip3 install --no-cache-dir \
+    tqdm \
+    gradio \
+    pyyaml \
+    einops \
+    chardet \
+    numpy==1.23.5 \
+    soundfile \
+    librosa==0.9.2 \
+    scipy \
+    pandas \
+    torchlibrosa==0.0.9 \
+    transformers==4.29.0 \
+    progressbar \
+    ftfy \
+    diffusers
+
+# Install AudioLDM
+RUN pip3 install --no-cache-dir git+https://github.com/haoheliu/AudioLDM.git
+
+# Additional cleanup
+RUN find /usr/local/lib/python3.8/dist-packages -name "*.pyc" -delete \
     && find /usr/local/lib/python3.8/dist-packages -name "__pycache__" -delete \
     && rm -rf /root/.cache/pip
 
