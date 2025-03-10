@@ -134,6 +134,38 @@ optional arguments:
 
 For the evaluation of audio generative model, please refer to [audioldm_eval](https://github.com/haoheliu/audioldm_eval).
 
+
+## Using Docker
+
+AudioLDM is also available as a Docker container for easier deployment and consistency across platforms.
+
+### Prerequisites
+
+- Docker installed on your system
+- For GPU support: NVIDIA GPU with [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed
+
+### Quick Start
+
+Pull and run the Docker image:
+
+```shell
+docker run --gpus all -v $(pwd)/output:/app/output ghcr.io/haoheliu/audioldm:latest --text "A hammer is hitting a wooden surface" --save_path /app/output
+```
+
+### All AudioLDM Options
+
+You can use all AudioLDM options with Docker:
+
+```shell
+docker run --gpus all -v $(pwd)/output:/app/output ghcr.io/haoheliu/audioldm:latest \
+  --mode "generation" \
+  --text "Rain falling on a window" \
+  --model_name "audioldm-m-full" \
+  --guidance_scale 3.5 \
+  --duration 10 \
+  --save_path /app/output
+```
+
 # Hugging Face 🧨 Diffusers
 
 AudioLDM is available in the Hugging Face [🧨 Diffusers](https://github.com/huggingface/diffusers) library from v0.15.0 onwards. The official checkpoints can be found on the [Hugging Face Hub](https://huggingface.co/cvssp), alongside [documentation](https://huggingface.co/docs/diffusers/main/en/api/pipelines/audioldm) and [examples scripts](https://huggingface.co/docs/diffusers/main/en/api/pipelines/audioldm).
