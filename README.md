@@ -152,6 +152,12 @@ Pull and run the Docker image:
 docker run --gpus all -v $(pwd)/output:/app/output ghcr.io/haoheliu/audioldm:latest --text "A hammer is hitting a wooden surface" --save_path /app/output
 ```
 
+### Running the Web App with Docker
+To run the Gradio web interface:
+```shell
+docker run --gpus all -p 7860:7860 ghcr.io/haoheliu/audioldm:latest webapp
+```
+
 ### All AudioLDM Options
 
 You can use all AudioLDM options with Docker:

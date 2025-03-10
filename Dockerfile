@@ -30,12 +30,31 @@ RUN pip3 install --no-cache-dir torch==1.12.1+cu116 torchvision==0.13.1+cu116 to
 RUN pip3 install --no-cache-dir numpy==1.23.5 \
     && pip3 install --no-cache-dir --no-deps git+https://github.com/haoheliu/AudioLDM.git \
     && pip3 install --no-cache-dir transformers==4.30.2 diffusers==0.19.3 \
+    && pip3 install --no-cache-dir gradio==3.34.0 \
     && find /usr/local/lib/python3.8/dist-packages -name "*.pyc" -delete \
     && find /usr/local/lib/python3.8/dist-packages -name "__pycache__" -delete \
     && rm -rf /root/.cache/pip
 
+# Clone the repository to get the app.py file
+RUN git clone https://github.com/haoheliu/AudioLDM .
+
+# Make the entrypoint script
+COPY <<EOF /app/entrypoint.sh
+#!/bin/bash
+if [ "\$1" = "webapp" ]; then
+    # Run the Gradio web app
+    python app.py
+else
+    # Run audioldm with arguments
+    audioldm "\$@"
+fi
+EOF
+
+# Make the entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
+
 # Set the entrypoint
-ENTRYPOINT ["audioldm"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Default command (can be overridden)
 CMD ["--help"]
