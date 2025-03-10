@@ -1,10 +1,10 @@
-FROM nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu20.04 AS builder
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies and clean up in the same layer
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     python3.8 \
     python3-pip \
@@ -23,13 +23,12 @@ RUN ln -sf /usr/bin/python3.8 /usr/bin/python && \
 # Set working directory
 WORKDIR /app
 
-# Install PyTorch with CUDA support (specific version required by AudioLDM)
+# Install PyTorch with CUDA support
 RUN pip3 install --no-cache-dir torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
 
-# Install all AudioLDM dependencies as per the module's requirements
+# Install all AudioLDM dependencies
 RUN pip3 install --no-cache-dir \
     tqdm \
-    gradio==3.22.1 \
     pyyaml \
     einops \
     chardet \
@@ -42,18 +41,48 @@ RUN pip3 install --no-cache-dir \
     transformers==4.29.0 \
     progressbar \
     ftfy \
-    diffusers
+    diffusers \
+    gradio==3.22.1
 
 # Install AudioLDM
 RUN pip3 install --no-cache-dir git+https://github.com/haoheliu/AudioLDM.git
 
-# Additional cleanup
-RUN find /usr/local/lib/python3.8/dist-packages -name "*.pyc" -delete \
-    && find /usr/local/lib/python3.8/dist-packages -name "__pycache__" -delete \
-    && rm -rf /root/.cache/pip
+# Clone only the necessary files from repository
+RUN git clone --depth 1 https://github.com/haoheliu/AudioLDM . && \
+    rm -rf .git
 
-# Clone the repository to get the app.py file
-RUN git clone https://github.com/haoheliu/AudioLDM .
+# Clean up pip cache and unnecessary files
+RUN find /usr/local/lib/python3.8/dist-packages -name "*.pyc" -delete && \
+    find /usr/local/lib/python3.8/dist-packages -name "__pycache__" -delete && \
+    rm -rf /root/.cache/pip
+
+# Create a smaller final image
+FROM nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu20.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    python3.8 \
+    python3-pip \
+    ffmpeg \
+    libsndfile1 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set Python 3.8 as default
+RUN ln -sf /usr/bin/python3.8 /usr/bin/python && \
+    ln -sf /usr/bin/python3.8 /usr/bin/python3
+
+# Set working directory
+WORKDIR /app
+
+# Copy installed Python packages and application files from builder stage
+COPY --from=builder /usr/local/lib/python3.8/dist-packages /usr/local/lib/python3.8/dist-packages
+COPY --from=builder /usr/local/bin/audioldm /usr/local/bin/audioldm
+COPY --from=builder /app /app
 
 # Make the entrypoint script
 COPY <<EOF /app/entrypoint.sh
