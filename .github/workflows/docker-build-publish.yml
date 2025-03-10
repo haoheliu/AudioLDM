@@ -27,15 +27,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ghcr.io/${{ github.repository }}/audioldm
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable={{is_default_branch}}
+      - name: Convert repository name to lowercase
+        id: repo-name
+        run: |
+          echo "REPO_LOWERCASE=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and push docker container
         uses: docker/build-push-action@v4
@@ -44,7 +45,7 @@ jobs:
           push: true
           file: Dockerfile
           tags: |
-            ghcr.io/${{ github.repository }}/audioldm:${{ steps.meta.outputs.version }}
-            ghcr.io/${{ github.repository }}/audioldm:latest
+            ghcr.io/${{ steps.repo-name.outputs.REPO_LOWERCASE }}/audioldm:${{ steps.version.outputs.VERSION }}
+            ghcr.io/${{ steps.repo-name.outputs.REPO_LOWERCASE }}/audioldm:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
