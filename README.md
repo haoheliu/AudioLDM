@@ -188,7 +188,7 @@ If you found this tool useful, please consider citing
   title={{AudioLDM}: Text-to-Audio Generation with Latent Diffusion Models},
   author={Liu, Haohe and Chen, Zehua and Yuan, Yi and Mei, Xinhao and Liu, Xubo and Mandic, Danilo and Wang, Wenwu and Plumbley, Mark D},
   journal={Proceedings of the International Conference on Machine Learning},
-  year={2023}
+  year={2023},
   pages={21450-21474}
 }
 ```
