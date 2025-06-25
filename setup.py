@@ -30,7 +30,7 @@ DESCRIPTION = "This package is written for text-to-audio generation."
 URL = "https://github.com/haoheliu/audioldm"
 EMAIL = "haoheliu@gmail.com"
 AUTHOR = "Haohe Liu"
-REQUIRES_PYTHON = ">=3.7.0"
+REQUIRES_PYTHON = ">=3.8.0"
 VERSION = "0.1.1"
 
 # What packages are required for this module to be executed?
@@ -43,13 +43,13 @@ REQUIRED = [
     "pyyaml",
     "einops",
     "chardet",
-    "numpy<=1.23.5",
+    "numpy>=1.24.0",
     "soundfile",
-    "librosa==0.9.2",
+    "librosa>=0.10.0",
     "scipy",
     "pandas",
-    "torchlibrosa==0.0.9",
-    "transformers==4.29.0",
+    "torchlibrosa>=0.0.9",
+    "transformers>=4.29.0",
     "progressbar",
     "ftfy",
 ]
@@ -148,7 +148,11 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
